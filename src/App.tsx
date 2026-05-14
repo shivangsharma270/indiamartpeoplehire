@@ -14,6 +14,7 @@ import Apply from './pages/Apply';
 import Profile from './pages/Profile';
 import ApplicantDetail from './pages/ApplicantDetail';
 import HelpCenter from './pages/HelpCenter';
+import InterviewPortal from './pages/InterviewPortal';
 
 import { auth as firebaseAuth } from './lib/firebase';
 import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
@@ -103,6 +104,9 @@ export default function App() {
                 {/* Generic Authenticated Route */}
                 <Route path="/help" element={user ? <HelpCenter /> : <Navigate to="/login" />} />
                 
+                {/* Public Portal Route */}
+                <Route path="/schedule/:appId" element={<InterviewPortal />} />
+
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </main>

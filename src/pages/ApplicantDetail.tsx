@@ -26,7 +26,7 @@ export default function ApplicantDetail() {
     setLoading(false);
   };
 
-  const handleUpdateStatus = async (status: 'accepted' | 'rejected' | 'reviewing') => {
+  const handleUpdateStatus = async (status: 'accepted' | 'rejected' | 'reviewing' | 'shortlisted') => {
     try {
       const { error } = await supabase
         .from('applications')
@@ -34,7 +34,21 @@ export default function ApplicantDetail() {
         .eq('id', id);
       
       if (error) throw error;
-      toast.success(`Candidate ${status}`);
+      
+      if (status === 'shortlisted') {
+        const portalUrl = `${window.location.origin}/schedule/${id}`;
+        toast.info(`Shortlisted! Invitation link generated: ${portalUrl}`, {
+          duration: 10000,
+          action: {
+            label: 'Copy Link',
+            onClick: () => navigator.clipboard.writeText(portalUrl)
+          }
+        });
+        console.log(`[SIMULATED EMAIL SENT] to candidate. Portal Link: ${portalUrl}`);
+      } else {
+        toast.success(`Candidate ${status}`);
+      }
+      
       fetchDetail();
     } catch (error: any) {
       toast.error(error.message);
@@ -170,12 +184,20 @@ export default function ApplicantDetail() {
               <ContactRow icon={<Phone size={14} />} text={data.candidate?.phone || 'Not Provided'} />
             </div>
             <div className="flex gap-2 mt-8">
+              {data.status !== 'shortlisted' && data.status !== 'accepted' && data.status !== 'rejected' && (
+                <button 
+                  onClick={() => handleUpdateStatus('shortlisted')}
+                  className="flex-1 py-3 bg-blue-600 rounded-lg text-xs font-bold hover:bg-blue-700 transition-all text-white"
+                >
+                  Shortlist
+                </button>
+              )}
               {data.status !== 'accepted' && (
                 <button 
                   onClick={() => handleUpdateStatus('accepted')}
                   className="flex-1 py-3 bg-green-600 rounded-lg text-xs font-bold hover:bg-green-700 transition-all text-white"
                 >
-                  Approve for Interview
+                  Approve
                 </button>
               )}
               {data.status !== 'rejected' && (

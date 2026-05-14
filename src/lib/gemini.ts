@@ -15,7 +15,9 @@ export async function analyzeResume(resumeText: string, jobDescription: string):
     throw new Error('LLM Gateway Access Token (VITE_LLM_GATEWAY_TOKEN) is not defined in environment variables.');
   }
 
-  const prompt = `Analyze this candidate resume against the following job description and return a compatibility score, matching skills, missing skills, strengths, weaknesses, and hiring recommendation in JSON format.
+  const prompt = `You are an expert technical recruiter strictly evaluating a candidate based ONLY on the provided job description and resume.
+    Do not make assumptions, infer skills that are not explicitly stated, or hallucinate information. 
+    Analyze the candidate's resume against the exact requirements listed in the job description.
     
     JOB DESCRIPTION:
     ${jobDescription}
@@ -23,7 +25,14 @@ export async function analyzeResume(resumeText: string, jobDescription: string):
     RESUME TEXT:
     ${resumeText}
 
-    CRITICAL: Return ONLY a valid JSON object matching this schema exactly:
+    CRITICAL INSTRUCTIONS:
+    - Base the compatibility "score" (0-100) purely on the presence of required skills and relevant experience from the Job Description.
+    - "matchedSkills" must ONLY contain skills explicitly present in BOTH the resume and the Job Description.
+    - "missingSkills" must contain required skills from the Job Description that are NOT mentioned in the resume.
+    - "experienceRelevance" should objectively compare the candidate's experience to what is required.
+    - "summary" should be a concise, objective justification of the score based only on facts from the resume.
+
+    Output ONLY a valid JSON object matching this schema exactly, without any markdown formatting or additional text:
     {
       "score": number,
       "matchedSkills": string[],

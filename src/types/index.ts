@@ -30,7 +30,7 @@ export interface Application {
   resume_url: string;
   resume_text: string;
   created_at: string;
-  status: 'pending' | 'reviewing' | 'accepted' | 'rejected';
+  status: 'pending' | 'reviewing' | 'accepted' | 'rejected' | 'shortlisted';
 }
 
 export interface AIScore {

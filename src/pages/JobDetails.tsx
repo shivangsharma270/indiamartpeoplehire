@@ -1,23 +1,41 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Job } from '../types';
-import { MapPin, Briefcase, Calendar, Building, ChevronLeft, ArrowRight, Clock } from 'lucide-react';
+import { useAuth } from '../App';
+import { Job, Application } from '../types';
+import { MapPin, Briefcase, Calendar, Building, ChevronLeft, ArrowRight, Clock, CheckCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function JobDetails() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [job, setJob] = useState<Job | null>(null);
+  const [userApp, setUserApp] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchJob();
-  }, [id]);
+    fetchJobAndApp();
+  }, [id, user?.id]);
 
-  const fetchJob = async () => {
+  const fetchJobAndApp = async () => {
     if (!id) return;
-    const { data } = await supabase.from('jobs').select('*').eq('id', id).single();
-    setJob(data);
+    
+    // Fetch job details
+    const { data: jobData } = await supabase.from('jobs').select('*').eq('id', id).single();
+    setJob(jobData);
+
+    // If user is logged in, check if they already applied
+    if (user?.id) {
+      const { data: appData } = await supabase
+        .from('applications')
+        .select('*')
+        .eq('job_id', id)
+        .eq('candidate_id', user.id)
+        .maybeSingle();
+      
+      setUserApp(appData);
+    }
+    
     setLoading(false);
   };
 
@@ -28,6 +46,8 @@ export default function JobDetails() {
   if (!job) {
     return <div className="text-center p-20">Job not found</div>;
   }
+
+  const jobCode = `ID-${job.id.split('-')[0].toUpperCase()}`;
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -47,20 +67,31 @@ export default function JobDetails() {
                 {job.company?.[0]}
               </div>
               <div className="space-y-1">
-                <h1 className="text-4xl font-extrabold text-slate-900">{job.title}</h1>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-4xl font-extrabold text-slate-900">{job.title}</h1>
+                  <span className="bg-slate-100 text-slate-500 px-2 py-1 rounded-md text-xs font-mono font-bold">{jobCode}</span>
+                </div>
                 <div className="flex items-center gap-2 text-xl text-slate-600 font-medium">
                   <Building size={20} className="text-slate-400" />
                   {job.company}
                 </div>
               </div>
             </div>
-            <Link
-              to={`/apply/${job.id}`}
-              className="bg-red-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-red-700 transition-all shadow-lg shadow-red-200 flex items-center gap-2 active:scale-95 self-start shrink-0"
-            >
-              Apply Now
-              <ArrowRight size={20} />
-            </Link>
+            
+            {userApp ? (
+              <div className="bg-slate-100 text-slate-500 px-6 py-4 rounded-xl font-bold text-lg border border-slate-200 flex items-center gap-2 self-start shrink-0 cursor-not-allowed">
+                <CheckCircle size={20} className="text-green-500" />
+                Already Applied
+              </div>
+            ) : (
+              <Link
+                to={`/apply/${job.id}`}
+                className="bg-red-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-red-700 transition-all shadow-lg shadow-red-200 flex items-center gap-2 active:scale-95 self-start shrink-0"
+              >
+                Apply Now
+                <ArrowRight size={20} />
+              </Link>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-slate-100">

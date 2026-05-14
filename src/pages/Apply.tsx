@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../App';
@@ -13,6 +13,8 @@ export default function Apply() {
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(false);
+  const [checkingStatus, setCheckingStatus] = useState(true);
+  const [hasApplied, setHasApplied] = useState(false);
   const [progress, setProgress] = useState(0);
   const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
@@ -25,6 +27,41 @@ export default function Apply() {
     expectedSalary: '',
     noticePeriod: '',
   });
+
+  useEffect(() => {
+    async function checkStatus() {
+      if (!user?.id || !jobId) return;
+      
+      const { data: existingApp } = await supabase
+        .from('applications')
+        .select('id')
+        .eq('job_id', jobId)
+        .eq('candidate_id', user.id)
+        .maybeSingle();
+
+      if (existingApp) {
+        setHasApplied(true);
+      }
+
+      const { data } = await supabase.from('candidates').select('*').eq('id', user.id).single();
+      if (data) {
+        setFormData(prev => ({
+          ...prev,
+          fullName: data.full_name || prev.fullName,
+          phone: data.phone || prev.phone,
+          skills: data.skills?.join(', ') || prev.skills,
+          experience: data.experience || prev.experience,
+          currentCompany: data.current_company || prev.currentCompany,
+          portfolioUrl: data.portfolio_url || prev.portfolioUrl,
+          expectedSalary: data.expected_salary?.toString() || prev.expectedSalary,
+          noticePeriod: data.notice_period || prev.noticePeriod,
+        }));
+      }
+      setCheckingStatus(false);
+    }
+    
+    checkStatus();
+  }, [user?.id, jobId]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -135,6 +172,25 @@ export default function Apply() {
       setLoading(false);
     }
   };
+
+  if (checkingStatus) {
+    return <div className="h-96 flex justify-center items-center"><div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div></div>;
+  }
+
+  if (hasApplied) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-8 pb-20 text-center pt-20">
+        <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <CheckCircle size={48} className="text-green-500" />
+        </div>
+        <h1 className="text-4xl font-extrabold text-slate-900">Already Applied</h1>
+        <p className="text-slate-500 text-lg">You have already submitted an application for this position.</p>
+        <button onClick={() => navigate('/dashboard')} className="mt-8 px-6 py-3 bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-200">
+          Go to Dashboard
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-20">

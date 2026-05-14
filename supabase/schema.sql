@@ -36,7 +36,7 @@ CREATE TABLE applications (
   candidate_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   resume_url TEXT NOT NULL,
   resume_text TEXT,
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'reviewing', 'accepted', 'rejected')),
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'reviewing', 'accepted', 'rejected', 'shortlisted')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -53,11 +53,60 @@ CREATE TABLE ai_scores (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- 5. Interviews Table
+CREATE TABLE interviews (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  application_id UUID REFERENCES applications(id) ON DELETE CASCADE,
+  candidate_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  interviewer_id UUID REFERENCES auth.users(id),
+  start_time TIMESTAMPTZ NOT NULL,
+  end_time TIMESTAMPTZ NOT NULL,
+  status TEXT DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'completed', 'cancelled', 'rescheduled')),
+  meet_link TEXT,
+  calendar_event_id TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 6. Interviewer Availability (Optional for custom slots, though we'll use Google Cal)
+CREATE TABLE interviewer_availability (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  interviewer_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  day_of_week INTEGER CHECK (day_of_week >= 0 AND day_of_week <= 6),
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  UNIQUE(interviewer_id, day_of_week, start_time, end_time)
+);
+
+-- 7. Interviewer Tokens Table
+CREATE TABLE interviewer_tokens (
+  user_id UUID REFERENCES auth.users(id) PRIMARY KEY,
+  refresh_token TEXT NOT NULL,
+  access_token TEXT,
+  expiry_date BIGINT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- RLS (Row Level Security) - Basic setup
 ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE candidates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ai_scores ENABLE ROW LEVEL SECURITY;
+ALTER TABLE interviews ENABLE ROW LEVEL SECURITY;
+ALTER TABLE interviewer_availability ENABLE ROW LEVEL SECURITY;
+ALTER TABLE interviewer_tokens ENABLE ROW LEVEL SECURITY;
+
+-- ... (previous policies)
+
+-- Token policies: admins only
+CREATE POLICY "Admins can manage tokens" ON interviewer_tokens FOR ALL USING (auth.jwt() ->> 'email' = 'admin@company.com');
+
+-- Interview policies: candidates and interviewers can see their own
+CREATE POLICY "Users can view their interviews" ON interviews FOR SELECT USING (
+  auth.uid() = candidate_id OR auth.uid() = interviewer_id OR auth.jwt() ->> 'email' = 'admin@company.com'
+);
+CREATE POLICY "Admins can manage interviews" ON interviews FOR ALL USING (auth.jwt() ->> 'email' = 'admin@company.com');
 
 -- Job policies: anyone can read active jobs
 CREATE POLICY "Anyone can view jobs" ON jobs FOR SELECT USING (true);

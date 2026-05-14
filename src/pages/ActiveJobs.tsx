@@ -131,8 +131,13 @@ export default function ActiveJobs() {
                         className="hover:bg-slate-50 transition-colors group"
                       >
                         <td className="px-6 py-4">
-                          <div className="font-bold text-slate-900">{job.title}</div>
-                          <div className="text-xs text-slate-500 mt-0.5">{job.company}</div>
+                          <div className="flex items-center gap-2">
+                             <div className="font-bold text-slate-900">{job.title}</div>
+                             <span className="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border border-slate-200">
+                               ID-{job.id.split('-')[0].toUpperCase()}
+                             </span>
+                          </div>
+                          <div className="text-xs text-slate-500 mt-1">{job.company}</div>
                         </td>
                         <td className="px-6 py-4 text-center">
                           <div className="inline-flex items-center gap-1 text-slate-600 bg-slate-100 px-2 py-1 rounded text-xs font-medium">
