@@ -1,0 +1,247 @@
+[
+  {
+    "id": "1",
+    "category": "Business/Process Related",
+    "question": "How can we create Forums for creating Case Studies?",
+    "keywords": ["forum", "case study", "product ideas", "AOP", "feedback", "open house"],
+    "answer": "Multiple forums are there where case studies and product ideas are discussed. AOPs are the forum where product ideas are co-created. Employees should regularly use the IM's product, be updated on the new features and share continuous ideas or feedback to improve it. If you have new ideas, suggestions, it can be shared directly with the product owner, functional team groups, reports and mails. Leaders shared that forums like these (open house) can be utilized for this purpose. Ideas can be shared with the manager directly and can be taken up further. HOD asked DRs to make such a forum, if required."
+  },
+  {
+    "id": "2",
+    "category": "Business/Process Related",
+    "question": "What are the next big initiatives or upcoming projects planned for IndiaMART?",
+    "keywords": ["initiatives", "upcoming projects", "launch mails", "product meets", "AOP", "IM Sangam", "management session"],
+    "answer": "Launch mails, Product Meets, Annual AOP, IM Sangam, and Management Occasional Sessions are the existing forums where such upcoming project ideas are co-created."
+  },
+  {
+    "id": "3",
+    "category": "Promotion/Career Progression",
+    "question": "How can an employee transition onto the payroll of IndiaMART?",
+    "keywords": ["payroll", "transition", "role vacancy", "A+ rating", "HOD recommendation", "QA analyst"],
+    "answer": "To transition onto the payroll of IndiaMART, three criteria must be met: 1) availability of the role vacancy, 2) A+ performance rating, and 3) a recommendation from the HOD, post which an offer can be rolled out for QA-Analyst role."
+  },
+  {
+    "id": "4",
+    "category": "Promotion/Career Progression",
+    "question": "When should employees expect a promotion?",
+    "keywords": ["promotion", "career progression", "appraisal", "performance", "work experience"],
+    "answer": "Career progression and promotions are determined based on factors such as demonstrated performance and work experience. Employees are encouraged to discuss their career aspirations with their manager and HOD for further clarity, taking into account their individual performance. Career Progression is a part of the annual appraisal process."
+  },
+  {
+    "id": "5",
+    "category": "Job Rotation",
+    "question": "Why is there so much team reshuffling?",
+    "keywords": ["reshuffling", "rotation", "cross learning", "exposure", "growth"],
+    "answer": "Rotation helps in cross learning, and provides exposure to more variety of people and work. It is for your 360 growth at IndiaMART."
+  },
+  {
+    "id": "6",
+    "category": "Job Rotation",
+    "question": "How can an employee request a change in their role or project?",
+    "keywords": ["role change", "project change", "request", "manager", "HOD", "HR", "6 months"],
+    "answer": "To request a change in your role or project, initiate a discussion with your Managers/HOD/HR. Additionally, employees must have completed at least 6 months in the current role in the organization."
+  },
+  {
+    "id": "7",
+    "category": "Project Concern",
+    "question": "How to approach a project and domains change?",
+    "keywords": ["project change", "domain change", "performance", "HOD", "HR"],
+    "answer": "Maintain strong performance consistently, and discuss opportunities for other projects with HOD and HR."
+  },
+  {
+    "id": "8",
+    "category": "Attendance",
+    "question": "What are the office timings for employees working under the Work from Office mode?",
+    "keywords": ["office timings", "WFO", "work from office", "9 hours", "9am", "6pm"],
+    "answer": "The office timings for WFO employees are from 9:00 AM to 6:00 PM, totaling 9 hours."
+  },
+  {
+    "id": "9",
+    "category": "Attendance",
+    "question": "How is attendance tracked for employees working under Work from Office?",
+    "keywords": ["attendance tracking", "WFO", "biometric", "finger scan", "sign in", "sign out"],
+    "answer": "Attendance for WFO employees is tracked based on Sign in and Sign out captured via Finger Scan on Bio-Metric devices installed at each floor."
+  },
+  {
+    "id": "10",
+    "category": "Attendance",
+    "question": "Are there any provisions for flexible working hours available to all employees?",
+    "keywords": ["flexible hours", "flexible working", "8:30 AM", "7:30 PM", "present", "9 hours"],
+    "answer": "Yes, an employee can complete 9 working hours between 8:30 AM to 7:30 PM to be marked as present for the day. Note: Policy is made keeping everyone into account. If any changes are to be done we need to think for everyone and every aspect."
+  },
+  {
+    "id": "11",
+    "category": "Attendance",
+    "question": "When is a half-day marked for employees?",
+    "keywords": ["half day", "4.5 hours", "7 hours", "attendance"],
+    "answer": "A half-day is marked if an employee works for 4.5 hours or more but less than 7 hours on a given day."
+  },
+  {
+    "id": "12",
+    "category": "Leaves",
+    "question": "How can an employee apply for Paternity leave?",
+    "keywords": ["paternity leave", "HOD", "approval", "HR SPOC", "Ramendra Chauhan"],
+    "answer": "The process involves initiating an email regarding paternity leave to the Head of Department (HoD) and getting an approval. Upon receiving approval, inform Ramendra Chauhan and loop HR SPOC to enable paternity leaves in the system."
+  },
+  {
+    "id": "13",
+    "category": "Leaves",
+    "question": "How can an employee pull back his leaves if he decides to resume work on applied leaves?",
+    "keywords": ["pull back leave", "cancel leave", "resume work", "HR SPOC", "manager approval"],
+    "answer": "To pull back a leave request due to work commitments, employees should connect with their HR SPOC. They need to obtain approval from their manager via email, while keeping their HR informed throughout the process."
+  },
+  {
+    "id": "14",
+    "category": "Leaves",
+    "question": "Is it possible for employees to utilize their current leave balance for special purposes?",
+    "keywords": ["leave balance", "special purpose", "utilize leaves"],
+    "answer": "Employees have the flexibility to utilize their current leave balance for any purpose."
+  },
+  {
+    "id": "15",
+    "category": "Leaves",
+    "question": "How many leaves is an employee entitled to avail?",
+    "keywords": ["leave entitlement", "21 leaves", "1.75 per month", "HQ employees", "leave policy"],
+    "answer": "Total 21 leaves, 1.75 per month is credited to HQ employees. For further details, employees can visit the Leave Policy."
+  },
+  {
+    "id": "16",
+    "category": "AR (WFH/Other/Office Tour)",
+    "question": "How many ARs is an employee allowed to apply in a month?",
+    "keywords": ["AR limit", "attendance regularization", "WFH", "hybrid", "2 AR", "insource"],
+    "answer": "An employee working in Hybrid mode is allowed a maximum of 2 AR Other and 2 AR WFH in a month. No AR for insource employees. Note: AR Office Tour is only permissible and subject to HOD approval for business or official visit. No other reason would be justified for using this."
+  },
+  {
+    "id": "17",
+    "category": "AR (WFH/Other/Office Tour)",
+    "question": "What is Attendance Regularization (AR)?",
+    "keywords": ["attendance regularization", "AR", "missed punch", "biometric", "business travel"],
+    "answer": "Attendance Regularization (AR) allows employees to request attendance correction if they miss punching in/out to mark their attendance or if they are unable to do so due to business travel purposes."
+  },
+  {
+    "id": "18",
+    "category": "AR (WFH/Other/Office Tour)",
+    "question": "When can an employee apply for ARs?",
+    "keywords": ["AR apply", "30 days", "7 hours", "biometric attendance"],
+    "answer": "An employee can apply for ARs within 30 days if they have worked up to 7 hours in a day as captured via biometric attendance."
+  },
+  {
+    "id": "19",
+    "category": "AR (WFH/Other/Office Tour)",
+    "question": "Is Work from Home AR applicable for personal use?",
+    "keywords": ["WFH AR", "work from home", "personal use", "official use", "manager approval"],
+    "answer": "No, Work from Home ARs are applicable for official use only, and they should be pre-approved by the manager. It can only be taken with manager's consent in exceptional cases."
+  },
+  {
+    "id": "20",
+    "category": "Roster Update",
+    "question": "How can employees change the roster days?",
+    "keywords": ["roster change", "roster days", "HOD", "HR helpdesk", "email"],
+    "answer": "Roster days for the team are approved by the HOD. An employee can write an email to HRHelpdesk@indiamart.com with the manager/HRBP's approval on it."
+  },
+  {
+    "id": "21",
+    "category": "Balanced Scorecard (BSC)",
+    "question": "Is the Balanced Scorecard (BSC) exclusively required for employees eligible for Performance Linked Incentives (PLI)?",
+    "keywords": ["BSC", "balanced scorecard", "PLI", "performance", "all employees"],
+    "answer": "BSC is applicable to all employees, not just those eligible for PLI. It is a standard tool to track employee performance. Therefore, it is important to maintain the BSC whether an employee is eligible for PLI or not."
+  },
+  {
+    "id": "22",
+    "category": "Balanced Scorecard (BSC)",
+    "question": "What are the possible reasons for failures in uploading a Balanced Scorecard (BSC)?",
+    "keywords": ["BSC upload", "upload failure", "file name", "XLS", "PDF", "HRBP"],
+    "answer": "If an employee is experiencing difficulty uploading the BSC, it may be due to factors such as a long file name or using a format other than XLS or PDF. It is recommended to connect with your HRBP for further assistance and clarification."
+  },
+  {
+    "id": "23",
+    "category": "Balanced Scorecard (BSC)",
+    "question": "If an employee joins in the middle of a quarter, is it necessary for them to upload their Balanced Scorecard (BSC)?",
+    "keywords": ["BSC", "new joiner", "mid-quarter", "two months", "upload"],
+    "answer": "If an employee joins within the first two months of the quarter, they are required to upload their Balanced Scorecard (BSC)."
+  },
+  {
+    "id": "24",
+    "category": "PLI Related",
+    "question": "If an employee joins in the last month of the quarter, are they eligible to receive the Performance Linked Incentive (PLI) for that month?",
+    "keywords": ["PLI", "new joiner", "last month", "prorated", "18th", "quarter"],
+    "answer": "If an employee joins between the 1st and 18th of the month and has a compensation package of 12 Lacs or above, they will receive the PLI on a prorated basis for that month. If they join after the 18th of the month, they will receive the prorated PLI along with the next quarter's PLI."
+  },
+  {
+    "id": "25",
+    "category": "PLI Related",
+    "question": "How can an employee determine his eligibility for the Performance Linked Incentive?",
+    "keywords": ["PLI eligibility", "12 lacs", "CTC", "offer letter", "appraisal letter"],
+    "answer": "The PLI component is applicable to employees with an annual CTC of 12 lacs or more. When an employee is eligible for the Performance Linked Incentive, it is mentioned in the offer letter/appraisal letter."
+  },
+  {
+    "id": "26",
+    "category": "Rewards/Recognition",
+    "question": "How does the rewards and recognition system operate and what are the different types of awards available?",
+    "keywords": ["rewards", "recognition", "RNR", "employee of the month", "best performer", "emerging star", "BSC", "nomination"],
+    "answer": "Employees who consistently achieve their BSC goals with high-quality deliverables and demonstrate additional initiatives are more likely to be rewarded. The manager nominates the employee and sends nominations to respective HODs and CXO for final approval. Awards: Employee of the Month (INR 5000), Best Performer of the Month (INR 2500), Emerging Star of the Month for employees joined within 0-180 days (INR 2500), Continuous Excellence (INR 2500), Pillar of Success (No cash reward)."
+  },
+  {
+    "id": "27",
+    "category": "Rewards/Recognition",
+    "question": "Why is the RNR amount taxable?",
+    "keywords": ["RNR", "taxable", "monetary benefit", "tax bracket"],
+    "answer": "As this pertains to a monetary benefit, no exemptions apply. If the amount falls within the taxable bracket, it will be subject to tax; otherwise, it will not be charged."
+  },
+  {
+    "id": "28",
+    "category": "Mediclaim Related",
+    "question": "Who is the SPOC for Mediclaim related queries and what are the steps for raising them?",
+    "keywords": ["mediclaim", "SPOC", "Neeraj Kumar Varshney", "IIL ticket", "MyWebERP", "insurance"],
+    "answer": "The designated SPOC for Mediclaim is Neeraj Kumar Varshney. Employees can raise a ticket under the Mediclaim section via MyWebERP >> MY IIL TICKETS >> New Issue >> Mediclaim. Alternatively, they can refer to the email titled 'Group Mediclaim Insurance (2023-24)'."
+  },
+  {
+    "id": "29",
+    "category": "Payroll Concern",
+    "question": "How can employees address and resolve salary or payroll-related concerns?",
+    "keywords": ["payroll", "salary concern", "IIL ticket", "WebERP", "payroll issue"],
+    "answer": "Employees can address their payroll-related concerns by raising an IIL ticket through WebERP. They can navigate to My ERP > IIL Ticket > New Issues > Payroll, fill in the necessary details, and then submit the ticket."
+  },
+  {
+    "id": "30",
+    "category": "IT Related",
+    "question": "How can employees reset their Gmail password?",
+    "keywords": ["Gmail", "password reset", "HR helpdesk", "employee ID", "IT"],
+    "answer": "To initiate a Gmail password reset, individuals can contact HRHelpDesk@indiamart.com and provide their employee ID. The HR team will then share the new password."
+  },
+  {
+    "id": "31",
+    "category": "IT Related",
+    "question": "Who is eligible for the Laptop allocation?",
+    "keywords": ["laptop", "allocation", "payroll", "eligibility"],
+    "answer": "Employees on IndiaMART's payroll are eligible for Laptop Allocation."
+  },
+  {
+    "id": "32",
+    "category": "Parking Concern",
+    "question": "Whom to reach out for a parking facility?",
+    "keywords": ["parking", "car", "RC copy", "Rajesh", "facility", "infra"],
+    "answer": "For Parking, share your car details along with RC Copy to Rajeshn@indiamart.com or open a ticket against Parking Facility > Service/Infra & Admin (Rajesh Kumar Choudhary)."
+  },
+  {
+    "id": "33",
+    "category": "Reimbursement",
+    "question": "How can an employee apply for expense reimbursement?",
+    "keywords": ["reimbursement", "expense", "HOD approval", "reimbursement form", "payable helpdesk"],
+    "answer": "Employees can download the reimbursement form from the Docs & Proposal section (Support >> Admin >> Expense Reimbursement Form), obtain approval from their HOD, and then submit it to the payable helpdesk. For further assistance, employees can refer to payablehelpdesk@indiamart.com."
+  },
+  {
+    "id": "34",
+    "category": "Hiring",
+    "question": "Made a referral but there is no revert from HR team.",
+    "keywords": ["referral", "HR", "no response", "Klimb", "refer@indiamart.com", "tracking"],
+    "answer": "For timely updates, it is suggested to share referrals at refer@indiamart.com or use Klimb to share directly to job posts. Other means are not feasible for better and timely tracking."
+  },
+  {
+    "id": "35",
+    "category": "Training Related",
+    "question": "Tech Learning Sessions are more focused towards backend related topics. What can be done?",
+    "keywords": ["tech learning", "training", "backend", "L&D", "HOD", "learning sessions"],
+    "answer": "You can approach the L&D Team directly or their HODs."
+  }
+]

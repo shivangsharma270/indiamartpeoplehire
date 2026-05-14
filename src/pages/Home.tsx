@@ -118,6 +118,50 @@ export default function Home() {
               </Link>
             </div>
           </div>
+
+          <div className="bg-gradient-to-br from-white to-slate-50 p-8 md:p-12 rounded-[2rem] border border-slate-200 shadow-xl shadow-slate-200/40 transition-all flex flex-col md:flex-row gap-10 items-center md:items-start group relative overflow-hidden">
+            <div className="absolute right-0 top-0 w-64 h-64 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-50 to-transparent opacity-60"></div>
+            
+            <div className="w-20 h-20 shrink-0 bg-white rounded-2xl flex items-center justify-center border border-slate-100 shadow-sm group-hover:scale-105 transition-transform z-10">
+              <div className="p-3 bg-blue-50 rounded-xl">
+                 <Cpu className="text-blue-600" size={32} />
+              </div>
+            </div>
+            <div className="z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <h3 className="text-3xl font-black tracking-tight text-slate-900 font-sans">HR FAQ Assistant</h3>
+                  <span className="bg-gradient-to-r from-blue-600 to-blue-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-sm font-sans">Internal</span>
+                </div>
+              </div>
+              <p className="text-base text-slate-600 leading-relaxed font-medium mb-8 font-sans">
+                An intelligent chatbot designed for IndiaMART employees to get instant answers to HR queries ranging from leave policies to payroll. Powered by Gemini, it provides accurate, source-verified information from the official knowledge base.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-sans"><CheckIcon /></div>
+                  Policy FAQ
+                </div>
+                <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-sans"><CheckIcon /></div>
+                  Ticket Escalation
+                </div>
+                <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-sans"><CheckIcon /></div>
+                  Personalized Context
+                </div>
+                <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-sans"><CheckIcon /></div>
+                  Zero Hallucination
+                </div>
+              </div>
+
+              <Link to="/portal" className="inline-flex items-center justify-center bg-blue-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors w-full sm:w-auto shadow-md shadow-blue-100 font-sans">
+                Enter Employee Portal <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

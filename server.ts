@@ -251,6 +251,57 @@ app.post('/api/interviews/book', async (req, res) => {
   }
 });
 
+// 5. HR Chatbot Endpoint
+app.post('/api/chatbot/query', async (req, res) => {
+  const { query, userId } = req.body;
+
+  try {
+    const fs = await import('fs/promises');
+    const questionsData = await fs.readFile(path.join(process.cwd(), 'questions.json'), 'utf-8');
+    const questions = JSON.parse(questionsData);
+
+    const prompt = `
+      You are IndiaMART's HR Assistant Bot. 
+      Your task is to answer employee queries strictly based on the provided Knowledge Base below.
+      
+      Knowledge Base (JSON):
+      ${JSON.stringify(questions)}
+
+      Employee Query: "${query}"
+
+      Strict Rules:
+      1. Answer ONLY using information from the Knowledge Base.
+      2. If the answer is not found, exactly respond with: "I could not find relevant information in the HR knowledge base."
+      3. Do NOT hallucinate or use external knowledge.
+      4. Keep answers concise, professional, and helpful.
+      5. If multiple categories seem relevant, mention them.
+      6. If the query is just a greeting, respond politely and ask how you can help with HR metrics.
+    `;
+
+    const result = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt,
+    });
+
+    const responseText = result.text;
+
+    // Store in Supabase
+    if (userId) {
+      await supabase.from('chatbot_conversations').insert({
+        user_id: userId,
+        query: query,
+        response: responseText
+      });
+    }
+
+    res.json({ response: responseText });
+
+  } catch (error) {
+    console.error('Chatbot Error:', error);
+    res.status(500).json({ error: 'Failed to process chat query' });
+  }
+});
+
 // Vite Middleware
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {

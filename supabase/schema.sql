@@ -88,6 +88,29 @@ CREATE TABLE interviewer_tokens (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- 8. Chatbot Conversations
+CREATE TABLE chatbot_conversations (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id),
+  query TEXT NOT NULL,
+  response TEXT NOT NULL,
+  category TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 9. Employee Tickets
+CREATE TABLE employee_tickets (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id),
+  category TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  description TEXT NOT NULL,
+  status TEXT DEFAULT 'open',
+  chatbot_context JSONB,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- RLS (Row Level Security) - Basic setup
 ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE candidates ENABLE ROW LEVEL SECURITY;
@@ -96,8 +119,18 @@ ALTER TABLE ai_scores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE interviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE interviewer_availability ENABLE ROW LEVEL SECURITY;
 ALTER TABLE interviewer_tokens ENABLE ROW LEVEL SECURITY;
+ALTER TABLE chatbot_conversations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE employee_tickets ENABLE ROW LEVEL SECURITY;
 
 -- ... (previous policies)
+
+-- Chatbot policies: users see their own
+CREATE POLICY "Users can view their conversations" ON chatbot_conversations FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert their conversations" ON chatbot_conversations FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Ticket policies: users see/manage their own
+CREATE POLICY "Users can manage their tickets" ON employee_tickets FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Admins can view all tickets" ON employee_tickets FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@company.com');
 
 -- Token policies: admins only
 CREATE POLICY "Admins can manage tokens" ON interviewer_tokens FOR ALL USING (auth.jwt() ->> 'email' = 'admin@company.com');

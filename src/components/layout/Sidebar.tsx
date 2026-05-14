@@ -8,6 +8,7 @@ export default function Sidebar() {
   const location = useLocation();
 
   const isAdmin = role === 'admin';
+  const isIndiaMartEmployee = user?.email?.endsWith('@indiamart.com');
 
   const menuItems = isAdmin ? [
     { label: 'Dashboard', path: '/admin', icon: LayoutDashboard },
@@ -16,6 +17,10 @@ export default function Sidebar() {
     { label: 'Job Search', path: '/dashboard', icon: Briefcase },
     { label: 'My Profile', path: '/profile', icon: User },
   ];
+
+  if (isIndiaMartEmployee && !isAdmin) {
+    menuItems.push({ label: 'Employee Portal', path: '/portal', icon: ShieldCheck });
+  }
 
   return (
     <aside className="w-64 bg-[#0a2540] flex flex-col border-r border-slate-800 text-slate-300 h-screen">

@@ -194,6 +194,22 @@ export default function Login({ type = 'candidate' }: { type?: 'candidate' | 'ad
                   </p>
                 </div>
               )}
+              {(!isAdminMode) && (
+                <div className="mt-8 pt-8 border-t border-slate-100">
+                  <p className="text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4">IndiaMART Employees</p>
+                  <button
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                    className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base hover:bg-slate-800 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 shadow-xl shadow-slate-200"
+                  >
+                    <Shield className="text-red-500" size={20} />
+                    {loading ? 'Verifying...' : 'Employee Portal Login'}
+                  </button>
+                  <p className="text-center text-[9px] text-slate-400 mt-3 font-bold uppercase tracking-widest leading-relaxed">
+                    Access internal FAQ bot & resources.<br/>Use your @indiamart.com account.
+                  </p>
+                </div>
+              )}
             </motion.div>
           </div>
         </div>

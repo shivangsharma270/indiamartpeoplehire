@@ -15,6 +15,7 @@ import Profile from './pages/Profile';
 import ApplicantDetail from './pages/ApplicantDetail';
 import HelpCenter from './pages/HelpCenter';
 import InterviewPortal from './pages/InterviewPortal';
+import EmployeePortal from './pages/EmployeePortal';
 
 import { auth as firebaseAuth } from './lib/firebase';
 import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
@@ -86,21 +87,28 @@ export default function App() {
             <main className="flex-1 overflow-auto">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/hire-pilot" element={user ? <Navigate to="/dashboard" /> : <Login type="candidate" />} />
+                <Route path="/hire-pilot" element={user ? (role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />) : <Login type="candidate" />} />
                 <Route path="/admin-login" element={user ? <Navigate to="/admin" /> : <Login type="admin" />} />
-                <Route path="/login" element={<Navigate to="/hire-pilot" />} />
+                <Route path="/login" element={
+                  user 
+                    ? (user.email?.endsWith('@indiamart.com') ? <Navigate to="/portal" /> : (role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />))
+                    : <Navigate to="/hire-pilot" />
+                } />
                 
                 {/* Candidate Routes */}
-                <Route path="/dashboard" element={role === 'candidate' ? <CandidateDashboard /> : <Navigate to="/login" />} />
+                <Route path="/dashboard" element={user && role === 'candidate' ? <CandidateDashboard /> : <Navigate to="/login" />} />
                 <Route path="/jobs/:id" element={<JobDetails />} />
-                <Route path="/apply/:id" element={role === 'candidate' ? <Apply /> : <Navigate to="/login" />} />
-                <Route path="/profile" element={role === 'candidate' ? <Profile /> : <Navigate to="/login" />} />
+                <Route path="/apply/:id" element={user && role === 'candidate' ? <Apply /> : <Navigate to="/login" />} />
+                <Route path="/profile" element={user && role === 'candidate' ? <Profile /> : <Navigate to="/login" />} />
                 
                 {/* Admin Routes */}
-                <Route path="/admin" element={role === 'admin' ? <AdminDashboard /> : <Navigate to="/login" />} />
-                <Route path="/admin/jobs" element={role === 'admin' ? <ActiveJobs /> : <Navigate to="/login" />} />
-                <Route path="/admin/applicant/:id" element={role === 'admin' ? <ApplicantDetail /> : <Navigate to="/login" />} />
+                <Route path="/admin" element={user && role === 'admin' ? <AdminDashboard /> : <Navigate to="/login" />} />
+                <Route path="/admin/jobs" element={user && role === 'admin' ? <ActiveJobs /> : <Navigate to="/login" />} />
+                <Route path="/admin/applicant/:id" element={user && role === 'admin' ? <ApplicantDetail /> : <Navigate to="/login" />} />
                 
+                {/* Employee / Team Routes */}
+                <Route path="/portal" element={!user ? <Navigate to="/login" /> : (user.email?.toLowerCase().endsWith('@indiamart.com') ? <EmployeePortal /> : <Navigate to="/" />)} />
+
                 {/* Generic Authenticated Route */}
                 <Route path="/help" element={user ? <HelpCenter /> : <Navigate to="/login" />} />
                 

@@ -1,6 +1,8 @@
 {
   "name": "Indiamart's PeopleFlow AI",
-  "description": "Indiamart's intelligent recruitment platform for automated candidate screening and hiring workflow.",
+  "description": "Indiamart's intelligent recruitment platform featuring AI-powered candidate screening and automated interview scheduling using Gemini.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
