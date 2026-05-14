@@ -49,20 +49,49 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     setLoading(true);
-    const { data: jobsData } = await supabase.from('jobs').select('*').order('created_at', { ascending: false });
-    const { data: appsData } = await supabase
-      .from('applications')
-      .select('*, job:jobs(*), candidate:candidates(*), ai_score:ai_scores(*)')
-      .order('created_at', { ascending: false });
-    
-    // Check calendar connection
-    const { count } = await supabase.from('interviewer_tokens').select('*', { count: 'exact', head: true });
-    setIsCalendarConnected((count || 0) > 0);
+    try {
+      // Fetch all necessary tables separately since PostgREST can't find some FK relationships
+      const [
+        { data: jobsData, error: jobsError },
+        { data: appsData, error: appsError },
+        { data: candidatesData, error: candError },
+        { data: scoresData, error: scoresError }
+      ] = await Promise.all([
+        supabase.from('jobs').select('*').order('created_at', { ascending: false }),
+        supabase.from('applications').select('*').order('created_at', { ascending: false }),
+        supabase.from('candidates').select('*'),
+        supabase.from('ai_scores').select('*')
+      ]);
 
-    setJobs(jobsData || []);
-    const sortedApps = (appsData || []).sort((a, b) => (b.ai_score?.score || 0) - (a.ai_score?.score || 0));
-    setApplications(sortedApps);
-    setLoading(false);
+      if (jobsError) console.error('Jobs Error:', jobsError);
+      if (appsError) console.error('Apps Error:', appsError);
+      if (candError) console.error('Candidates Error:', candError);
+      if (scoresError) console.error('Scores Error:', scoresError);
+
+      const jobsMap = new Map((jobsData || []).map(j => [j.id, j]));
+      const candidatesMap = new Map((candidatesData || []).map(c => [c.id, c]));
+      const scoresMap = new Map((scoresData || []).map(s => [s.application_id, s]));
+
+      const enrichedApps = (appsData || []).map(app => ({
+        ...app,
+        job: jobsMap.get(app.job_id),
+        candidate: candidatesMap.get(app.candidate_id),
+        ai_score: scoresMap.get(app.id) || null
+      })).filter(app => app.job && app.candidate); // Filter out orphans if any
+
+      // Check calendar connection
+      const { count } = await supabase.from('interviewer_tokens').select('*', { count: 'exact', head: true });
+      setIsCalendarConnected((count || 0) > 0);
+
+      setJobs(jobsData || []);
+      const sortedApps = enrichedApps.sort((a, b) => (b.ai_score?.score || 0) - (a.ai_score?.score || 0));
+      setApplications(sortedApps as any);
+    } catch (err) {
+      console.error('Fetch Data Error:', err);
+      toast.error('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAnalyze = async (app: Application & { job: Job }) => {

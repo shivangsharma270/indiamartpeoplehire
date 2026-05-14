@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS candidates (
 CREATE TABLE IF NOT EXISTS applications (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
-  candidate_id TEXT NOT NULL, -- Firebase UID (TEXT)
+  candidate_id TEXT NOT NULL REFERENCES candidates(id), -- Firebase UID (TEXT) with FK added
   resume_url TEXT NOT NULL,
   resume_text TEXT,
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'reviewing', 'accepted', 'rejected', 'shortlisted')),
@@ -137,17 +137,17 @@ ALTER TABLE employee_tickets ENABLE ROW LEVEL SECURITY;
 
 -- Jobs
 CREATE POLICY "Anyone can view jobs" ON jobs FOR SELECT USING (true);
-CREATE POLICY "Admins can manage jobs" ON jobs FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+CREATE POLICY "Admins can manage jobs" ON jobs FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
 
 -- Candidates
 CREATE POLICY "Users can manage their own profile" ON candidates FOR ALL USING (auth.uid()::text = id);
-CREATE POLICY "Admins can view all profiles" ON candidates FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+CREATE POLICY "Admins can view all profiles" ON candidates FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
 
 -- Applications
 CREATE POLICY "Users can view their applications" ON applications FOR SELECT USING (auth.uid()::text = candidate_id);
 CREATE POLICY "Users can submit applications" ON applications FOR INSERT WITH CHECK (auth.uid()::text = candidate_id);
-CREATE POLICY "Admins can view all applications" ON applications FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
-CREATE POLICY "Admins can update application status" ON applications FOR UPDATE USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+CREATE POLICY "Admins can view all applications" ON applications FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
+CREATE POLICY "Admins can update application status" ON applications FOR UPDATE USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
 
 -- AI Scores
 CREATE POLICY "Users can view their scores" ON ai_scores FOR SELECT USING (
@@ -157,20 +157,20 @@ CREATE POLICY "Users can view their scores" ON ai_scores FOR SELECT USING (
     AND applications.candidate_id = auth.uid()::text
   )
 );
-CREATE POLICY "Admins can manage all scores" ON ai_scores FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+CREATE POLICY "Admins can manage all scores" ON ai_scores FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
 
 -- Interviews
 CREATE POLICY "Users can view their interviews" ON interviews FOR SELECT USING (
-  auth.uid()::text = candidate_id OR auth.uid()::text = interviewer_id OR auth.jwt() ->> 'email' = 'admin@teamstellarx.com'
+  auth.uid()::text = candidate_id OR auth.uid()::text = interviewer_id OR auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com'
 );
-CREATE POLICY "Admins can manage interviews" ON interviews FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+CREATE POLICY "Admins can manage interviews" ON interviews FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
 
 -- Chatbot
 CREATE POLICY "Users can manage their conversations" ON chatbot_conversations FOR ALL USING (auth.uid()::text = user_id);
 
 -- Tickets
 CREATE POLICY "Users can manage their tickets" ON employee_tickets FOR ALL USING (auth.uid()::text = user_id);
-CREATE POLICY "Admins can manage tickets" ON employee_tickets FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+CREATE POLICY "Admins can manage tickets" ON employee_tickets FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
 
 -- Tokens
-CREATE POLICY "Admins can manage tokens" ON interviewer_tokens FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+CREATE POLICY "Admins can manage tokens" ON interviewer_tokens FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');

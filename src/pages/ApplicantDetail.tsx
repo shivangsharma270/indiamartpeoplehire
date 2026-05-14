@@ -16,14 +16,39 @@ export default function ApplicantDetail() {
   }, [id]);
 
   const fetchDetail = async () => {
-    const { data: app } = await supabase
-      .from('applications')
-      .select('*, job:jobs(*), candidate:candidates(*), ai_score:ai_scores(*)')
-      .eq('id', id)
-      .single();
-    
-    setData(app);
-    setLoading(false);
+    setLoading(true);
+    try {
+      // Fetch data separately to handle missing FK relationships
+      const { data: app, error: appError } = await supabase
+        .from('applications')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (appError) throw appError;
+
+      const [
+        { data: jobData },
+        { data: candData },
+        { data: scoreData }
+      ] = await Promise.all([
+        supabase.from('jobs').select('*').eq('id', app.job_id).single(),
+        supabase.from('candidates').select('*').eq('id', app.candidate_id).single(),
+        supabase.from('ai_scores').select('*').eq('application_id', app.id).maybeSingle()
+      ]);
+
+      setData({
+        ...app,
+        job: jobData,
+        candidate: candData,
+        ai_score: scoreData
+      });
+    } catch (err: any) {
+      console.error('Fetch Detail Error:', err);
+      toast.error('Failed to load applicant details');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleUpdateStatus = async (status: 'accepted' | 'rejected' | 'reviewing' | 'shortlisted') => {
