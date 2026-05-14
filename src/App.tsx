@@ -16,11 +16,12 @@ import ApplicantDetail from './pages/ApplicantDetail';
 import HelpCenter from './pages/HelpCenter';
 import InterviewPortal from './pages/InterviewPortal';
 import EmployeePortal from './pages/EmployeePortal';
+import AdminEmployeeTrack from './pages/AdminEmployeeTrack';
 
 import { auth as firebaseAuth } from './lib/firebase';
 import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 
-type UserRole = 'candidate' | 'admin' | null;
+type UserRole = 'candidate' | 'admin' | 'employee' | null;
 
 interface AuthContextType {
   user: any;
@@ -42,6 +43,7 @@ export default function App() {
   const [user, setUser] = useState<any>(null);
   const [role, setRole] = useState<UserRole>(null);
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, (fUser) => {
@@ -50,8 +52,10 @@ export default function App() {
         const userWithId = Object.assign(fUser, { id: fUser.uid });
         setUser(userWithId);
         
-        if (fUser.email === 'admin@company.com' || fUser.email === 'shivang.sharma@indiamart.com') {
+        if (fUser.email === 'admin@teamstellarx.com') {
           setRole('admin');
+        } else if (fUser.email?.toLowerCase().endsWith('@indiamart.com')) {
+          setRole('employee');
         } else {
           setRole('candidate');
         }
@@ -78,20 +82,30 @@ export default function App() {
   return (
     <AuthContext.Provider value={{ user, role, loading, signOut }}>
       <BrowserRouter>
-        <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
-          {user && <Sidebar />}
+        <div className="flex h-screen bg-slate-50 overflow-hidden font-sans relative">
+          {user && (
+            <Sidebar 
+              isOpen={isSidebarOpen} 
+              onClose={() => setIsSidebarOpen(false)} 
+            />
+          )}
           
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-            {user && <Header />}
+            {user && (
+              <Header 
+                onMenuClick={() => setIsSidebarOpen(true)} 
+              />
+            )}
             
             <main className="flex-1 overflow-auto">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/hire-pilot" element={user ? (role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />) : <Login type="candidate" />} />
+                <Route path="/hire-pilot" element={user ? (role === 'admin' ? <Navigate to="/admin" /> : (role === 'employee' ? <Navigate to="/portal" /> : <Navigate to="/dashboard" />)) : <Login type="candidate" />} />
                 <Route path="/admin-login" element={user ? <Navigate to="/admin" /> : <Login type="admin" />} />
+                <Route path="/employee-login" element={user && role === 'employee' ? <Navigate to="/portal" /> : <Login type="employee" />} />
                 <Route path="/login" element={
                   user 
-                    ? (user.email?.endsWith('@indiamart.com') ? <Navigate to="/portal" /> : (role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />))
+                    ? (role === 'employee' ? <Navigate to="/portal" /> : (role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />))
                     : <Navigate to="/hire-pilot" />
                 } />
                 
@@ -105,9 +119,10 @@ export default function App() {
                 <Route path="/admin" element={user && role === 'admin' ? <AdminDashboard /> : <Navigate to="/login" />} />
                 <Route path="/admin/jobs" element={user && role === 'admin' ? <ActiveJobs /> : <Navigate to="/login" />} />
                 <Route path="/admin/applicant/:id" element={user && role === 'admin' ? <ApplicantDetail /> : <Navigate to="/login" />} />
+                <Route path="/admin/employee-track" element={user && role === 'admin' ? <AdminEmployeeTrack /> : <Navigate to="/login" />} />
                 
                 {/* Employee / Team Routes */}
-                <Route path="/portal" element={!user ? <Navigate to="/login" /> : (user.email?.toLowerCase().endsWith('@indiamart.com') ? <EmployeePortal /> : <Navigate to="/" />)} />
+                <Route path="/portal" element={user && role === 'employee' ? <EmployeePortal /> : <Navigate to="/employee-login" />} />
 
                 {/* Generic Authenticated Route */}
                 <Route path="/help" element={user ? <HelpCenter /> : <Navigate to="/login" />} />

@@ -193,13 +193,13 @@ export default function Apply() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-20">
-      <header className="text-center space-y-2">
-        <h1 className="text-4xl font-extrabold text-slate-900">Final Step</h1>
-        <p className="text-slate-500 text-lg">Tell us about yourself and upload your portfolio.</p>
+    <div className="max-w-4xl mx-auto space-y-6 md:space-y-8 pb-20 px-4 md:px-0">
+      <header className="text-center space-y-2 pt-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Final Step</h1>
+        <p className="text-sm md:text-lg text-slate-500 font-medium">Tell us about yourself and upload your resume.</p>
       </header>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl shadow-slate-200 border border-slate-100 p-8 md:p-12 space-y-12">
+      <form onSubmit={handleSubmit} className="bg-white rounded-[2rem] md:rounded-3xl shadow-xl shadow-slate-200 border border-slate-100 p-6 md:p-12 space-y-8 md:space-y-12">
         {/* Personal Info Grid */}
         <section className="space-y-6">
           <h2 className="text-xl font-bold flex items-center gap-2 text-red-600">

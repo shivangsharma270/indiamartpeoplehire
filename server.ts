@@ -2,7 +2,6 @@ import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { google } from 'googleapis';
-import { GoogleGenAI, Type } from '@google/genai';
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 
@@ -19,15 +18,43 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY!
 );
 
-// Gemini AI Setup
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
-    }
+// AI Gateway Helper (IndiaMART LLM)
+async function callLLMGateway(prompt: string, model: string = "google/gemini-2.5-flash", temperature: number = 0.1, responseFormat?: any) {
+  const apiKey = process.env.VITE_LLM_GATEWAY_TOKEN;
+  const gatewayUrl = "https://imllm.intermesh.net/v1/chat/completions";
+
+  if (!apiKey) {
+    throw new Error('LLM Gateway Token (VITE_LLM_GATEWAY_TOKEN) is not defined.');
   }
-});
+
+  const response = await fetch(gatewayUrl, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: model,
+      messages: [{ role: "user", content: prompt }],
+      temperature: temperature,
+      ...(responseFormat ? { response_format: responseFormat } : {})
+    })
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(`LLM Gateway Error (${response.status}): ${JSON.stringify(errorData)}`);
+  }
+
+  const data = await response.json();
+  let content = data.choices[0].message.content;
+
+  if (content.includes('```')) {
+    content = content.replace(/```json/g, '').replace(/```/g, '').trim();
+  }
+
+  return content;
+}
 
 // Google OAuth client helper
 const getOAuth2Client = (req?: express.Request) => {
@@ -71,7 +98,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
     
     if (tokens.refresh_token) {
       // Store in DB
-      const adminEmail = 'admin@company.com'; // Hardcoded for demo/admin
+      const adminEmail = 'admin@teamstellarx.com'; // Updated admin email
       const { data: userData } = await supabase.from('candidates').select('id').eq('email', adminEmail).single();
       
       if (userData) {
@@ -149,7 +176,7 @@ app.post('/api/interviews/suggest-slots', async (req, res) => {
 
     const busySlots = freeBusy.data.calendars?.primary?.busy || [];
 
-    // Use Gemini to suggest optimized slots
+    // Use AI Gateway to suggest optimized slots
     const prompt = `
       I need to schedule an interview next week (Monday to Friday, 10:00 AM to 5:00 PM).
       Current busy slots for the interviewer: ${JSON.stringify(busySlots)}
@@ -158,29 +185,12 @@ app.post('/api/interviews/suggest-slots', async (req, res) => {
       Generate a list of 10 recommended 30-minute interview slots.
       Ensure slots do not overlap with busy slots.
       Prefer mornings or early afternoons.
-      Format: JSON array of objects with start and end as ISO strings.
+      Format: Output ONLY a JSON array of objects with start and end as ISO strings.
+      Example: [{"start": "...", "end": "..."}]
     `;
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              start: { type: Type.STRING },
-              end: { type: Type.STRING }
-            },
-            required: ['start', 'end']
-          }
-        }
-      }
-    });
-
-    const suggestedSlots = JSON.parse(result.text);
+    const content = await callLLMGateway(prompt);
+    const suggestedSlots = JSON.parse(content);
     res.json({ slots: suggestedSlots });
 
   } catch (error) {
@@ -278,12 +288,8 @@ app.post('/api/chatbot/query', async (req, res) => {
       6. If the query is just a greeting, respond politely and ask how you can help with HR metrics.
     `;
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: prompt,
-    });
-
-    const responseText = result.text;
+    const content = await callLLMGateway(prompt);
+    const responseText = content;
 
     // Store in Supabase
     if (userId) {

@@ -1,8 +1,15 @@
--- Create tables for Indiamart PeopleFlow AI Platform
+-- Supabase Schema for IndiaMART PeopleFlow (Firebase Auth + Supabase DB)
+-- Fixes: operator does not exist: text = uuid and invalid input syntax for type uuid
 
--- 1. Jobs Table
-CREATE TABLE jobs (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+-- Note: User IDs are stored as TEXT because they come from Firebase Auth (e.g. "GjI5QaTefmR9Fxp1LfG1AOXmaNB2")
+-- Note: auth.uid() in Supabase returned as UUID, so we must cast to TEXT (::text)
+
+-- 1. Enable UUID extension for table primary keys
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- 2. Jobs Table
+CREATE TABLE IF NOT EXISTS jobs (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   title TEXT NOT NULL,
   company TEXT NOT NULL,
   location TEXT NOT NULL,
@@ -10,13 +17,12 @@ CREATE TABLE jobs (
   required_skills TEXT[] DEFAULT '{}',
   experience_required TEXT NOT NULL,
   status TEXT DEFAULT 'active' CHECK (status IN ('active', 'filled')),
-  created_at TIMESTAMPTZ DEFAULT now(),
-  created_by UUID REFERENCES auth.users(id)
+  created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 2. Candidates Table (Profile info for candidates)
-CREATE TABLE candidates (
-  id UUID REFERENCES auth.users(id) PRIMARY KEY,
+-- 3. Candidates Table (Profile info for candidates)
+CREATE TABLE IF NOT EXISTS candidates (
+  id TEXT PRIMARY KEY, -- Firebase UID (TEXT)
   full_name TEXT NOT NULL,
   email TEXT NOT NULL,
   phone TEXT,
@@ -29,20 +35,20 @@ CREATE TABLE candidates (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 3. Applications Table
-CREATE TABLE applications (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+-- 4. Applications Table
+CREATE TABLE IF NOT EXISTS applications (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
-  candidate_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  candidate_id TEXT NOT NULL, -- Firebase UID (TEXT)
   resume_url TEXT NOT NULL,
   resume_text TEXT,
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'reviewing', 'accepted', 'rejected', 'shortlisted')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 4. AI Scores Table
-CREATE TABLE ai_scores (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+-- 5. AI Scores Table
+CREATE TABLE IF NOT EXISTS ai_scores (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   application_id UUID REFERENCES applications(id) ON DELETE CASCADE,
   score INTEGER CHECK (score >= 0 AND score <= 100),
   matched_skills TEXT[] DEFAULT '{}',
@@ -53,12 +59,12 @@ CREATE TABLE ai_scores (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 5. Interviews Table
-CREATE TABLE interviews (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+-- 6. Interviews Table
+CREATE TABLE IF NOT EXISTS interviews (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   application_id UUID REFERENCES applications(id) ON DELETE CASCADE,
-  candidate_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  interviewer_id UUID REFERENCES auth.users(id),
+  candidate_id TEXT NOT NULL, -- Firebase UID (TEXT)
+  interviewer_id TEXT NOT NULL, -- Firebase UID or Email (TEXT)
   start_time TIMESTAMPTZ NOT NULL,
   end_time TIMESTAMPTZ NOT NULL,
   status TEXT DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'completed', 'cancelled', 'rescheduled')),
@@ -68,19 +74,21 @@ CREATE TABLE interviews (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 6. Interviewer Availability (Optional for custom slots, though we'll use Google Cal)
-CREATE TABLE interviewer_availability (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  interviewer_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+-- 7. Interviewer Availability
+CREATE TABLE IF NOT EXISTS interviewer_availability (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  interviewer_id TEXT NOT NULL, -- Firebase UID (TEXT)
   day_of_week INTEGER CHECK (day_of_week >= 0 AND day_of_week <= 6),
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
   UNIQUE(interviewer_id, day_of_week, start_time, end_time)
 );
 
--- 7. Interviewer Tokens Table
-CREATE TABLE interviewer_tokens (
-  user_id UUID REFERENCES auth.users(id) PRIMARY KEY,
+-- 8. Interviewer Tokens Table
+CREATE TABLE IF NOT EXISTS interviewer_tokens (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id TEXT REFERENCES candidates(id), -- Match the candidate/admin record (TEXT)
+  email TEXT UNIQUE NOT NULL,
   refresh_token TEXT NOT NULL,
   access_token TEXT,
   expiry_date BIGINT,
@@ -88,30 +96,33 @@ CREATE TABLE interviewer_tokens (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 8. Chatbot Conversations
-CREATE TABLE chatbot_conversations (
+-- 9. Chatbot Conversations (Note: user_id is TEXT)
+CREATE TABLE IF NOT EXISTS chatbot_conversations (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id),
+  user_id TEXT NOT NULL, -- Firebase UID (TEXT)
   query TEXT NOT NULL,
   response TEXT NOT NULL,
   category TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 9. Employee Tickets
-CREATE TABLE employee_tickets (
+-- 10. Employee Tickets (Note: user_id is TEXT)
+CREATE TABLE IF NOT EXISTS employee_tickets (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id),
+  user_id TEXT NOT NULL, -- Firebase UID (TEXT)
   category TEXT NOT NULL,
   subject TEXT NOT NULL,
   description TEXT NOT NULL,
-  status TEXT DEFAULT 'open',
+  status TEXT DEFAULT 'open' CHECK (status IN ('open', 'in_progress', 'resolved', 'closed')),
   chatbot_context JSONB,
+  resolution TEXT,
+  resolved_by TEXT, -- Admin Email or UID
+  resolved_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- RLS (Row Level Security) - Basic setup
+-- ENABLE RLS
 ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE candidates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
@@ -122,48 +133,44 @@ ALTER TABLE interviewer_tokens ENABLE ROW LEVEL SECURITY;
 ALTER TABLE chatbot_conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE employee_tickets ENABLE ROW LEVEL SECURITY;
 
--- ... (previous policies)
+-- POLICIES (With auth.uid()::text casting)
 
--- Chatbot policies: users see their own
-CREATE POLICY "Users can view their conversations" ON chatbot_conversations FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert their conversations" ON chatbot_conversations FOR INSERT WITH CHECK (auth.uid() = user_id);
-
--- Ticket policies: users see/manage their own
-CREATE POLICY "Users can manage their tickets" ON employee_tickets FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Admins can view all tickets" ON employee_tickets FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@company.com');
-
--- Token policies: admins only
-CREATE POLICY "Admins can manage tokens" ON interviewer_tokens FOR ALL USING (auth.jwt() ->> 'email' = 'admin@company.com');
-
--- Interview policies: candidates and interviewers can see their own
-CREATE POLICY "Users can view their interviews" ON interviews FOR SELECT USING (
-  auth.uid() = candidate_id OR auth.uid() = interviewer_id OR auth.jwt() ->> 'email' = 'admin@company.com'
-);
-CREATE POLICY "Admins can manage interviews" ON interviews FOR ALL USING (auth.jwt() ->> 'email' = 'admin@company.com');
-
--- Job policies: anyone can read active jobs
+-- Jobs
 CREATE POLICY "Anyone can view jobs" ON jobs FOR SELECT USING (true);
-CREATE POLICY "Admins can manage jobs" ON jobs FOR ALL USING (auth.jwt() ->> 'email' = 'admin@company.com');
+CREATE POLICY "Admins can manage jobs" ON jobs FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
 
--- Candidate policies: users can manage their own profile
-CREATE POLICY "Users can manage their own profile" ON candidates FOR ALL USING (auth.uid() = id);
+-- Candidates
+CREATE POLICY "Users can manage their own profile" ON candidates FOR ALL USING (auth.uid()::text = id);
+CREATE POLICY "Admins can view all profiles" ON candidates FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
 
--- Application policies: users can see their own, admins can see all
-CREATE POLICY "Users can view their applications" ON applications FOR SELECT USING (auth.uid() = candidate_id);
-CREATE POLICY "Users can submit applications" ON applications FOR INSERT WITH CHECK (auth.uid() = candidate_id);
-CREATE POLICY "Admins can view all applications" ON applications FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@company.com');
-CREATE POLICY "Admins can update application status" ON applications FOR UPDATE USING (auth.jwt() ->> 'email' = 'admin@company.com');
+-- Applications
+CREATE POLICY "Users can view their applications" ON applications FOR SELECT USING (auth.uid()::text = candidate_id);
+CREATE POLICY "Users can submit applications" ON applications FOR INSERT WITH CHECK (auth.uid()::text = candidate_id);
+CREATE POLICY "Admins can view all applications" ON applications FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+CREATE POLICY "Admins can update application status" ON applications FOR UPDATE USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
 
--- AI scores policies: users can see scores for their applications, admins can see all
+-- AI Scores
 CREATE POLICY "Users can view their scores" ON ai_scores FOR SELECT USING (
   EXISTS (
     SELECT 1 FROM applications 
     WHERE applications.id = ai_scores.application_id 
-    AND applications.candidate_id = auth.uid()
+    AND applications.candidate_id = auth.uid()::text
   )
 );
-CREATE POLICY "Admins can manage all scores" ON ai_scores FOR ALL USING (auth.jwt() ->> 'email' = 'admin@company.com');
+CREATE POLICY "Admins can manage all scores" ON ai_scores FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
 
--- NOTE: Set up Storage Bucket named 'resumes' manually in Supabase dashboard
--- Policy for 'resumes' bucket:
--- Authenticated users can upload to their own folder, admins can read all.
+-- Interviews
+CREATE POLICY "Users can view their interviews" ON interviews FOR SELECT USING (
+  auth.uid()::text = candidate_id OR auth.uid()::text = interviewer_id OR auth.jwt() ->> 'email' = 'admin@teamstellarx.com'
+);
+CREATE POLICY "Admins can manage interviews" ON interviews FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+
+-- Chatbot
+CREATE POLICY "Users can manage their conversations" ON chatbot_conversations FOR ALL USING (auth.uid()::text = user_id);
+
+-- Tickets
+CREATE POLICY "Users can manage their tickets" ON employee_tickets FOR ALL USING (auth.uid()::text = user_id);
+CREATE POLICY "Admins can manage tickets" ON employee_tickets FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+
+-- Tokens
+CREATE POLICY "Admins can manage tokens" ON interviewer_tokens FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');

@@ -45,32 +45,32 @@ export default function CandidateDashboard() {
   return (
     <div className="flex flex-col h-full bg-slate-50 overflow-hidden">
       {/* Header Area */}
-      <div className="p-8 bg-white border-b border-slate-200 shrink-0 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="w-full md:w-1/2 space-y-1">
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">Discover Opportunities</h1>
-          <p className="text-sm text-slate-500 font-medium">Find your next big role with our intelligent matching.</p>
+      <div className="p-4 md:p-8 bg-white border-b border-slate-200 shrink-0 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
+        <div className="w-full md:w-1/2 space-y-1 text-center md:text-left">
+          <h1 className="text-xl md:text-2xl font-black text-slate-800 tracking-tight">Discover Opportunities</h1>
+          <p className="text-xs md:text-sm text-slate-500 font-medium">Find your next big role with our intelligent matching.</p>
         </div>
         <div className="relative w-full max-w-xl">
-          <Search className="absolute left-4 top-3.5 text-slate-400" size={18} />
+          <Search className="absolute left-4 top-3 md:top-3.5 text-slate-400" size={16} />
           <input 
             type="text" 
-            placeholder="Search roles (e.g. Design, Frontend...)" 
+            placeholder="Search roles..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 outline-none transition-all shadow-sm"
+            className="w-full pl-11 pr-4 py-2.5 md:py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 outline-none transition-all shadow-sm"
           />
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden flex flex-col md:flex-row min-h-0 container mx-auto max-w-6xl">
+      <div className="flex-1 overflow-auto md:overflow-hidden flex flex-col md:flex-row min-h-0 container mx-auto max-w-6xl">
         {/* Main Job List */}
-        <div className="flex-1 overflow-auto p-6 space-y-6">
-          <div className="flex items-center justify-between">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
               <TrendingUp size={16} className="text-red-500" /> 
               Recommended Jobs
             </h2>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
               <select 
                 value={filterLocation}
                 onChange={(e) => setFilterLocation(e.target.value)}

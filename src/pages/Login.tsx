@@ -5,8 +5,9 @@ import { toast } from 'sonner';
 import { Shield, Mail, Lock, Chrome, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 
-export default function Login({ type = 'candidate' }: { type?: 'candidate' | 'admin' }) {
+export default function Login({ type = 'candidate' }: { type?: 'candidate' | 'admin' | 'employee' }) {
   const isAdminMode = type === 'admin';
+  const isEmployeeMode = type === 'employee';
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,7 +15,15 @@ export default function Login({ type = 'candidate' }: { type?: 'candidate' | 'ad
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      await signInWithPopup(firebaseAuth, googleProvider);
+      const result = await signInWithPopup(firebaseAuth, googleProvider);
+      const user = result.user;
+      
+      if (isEmployeeMode && !user.email?.toLowerCase().endsWith('@indiamart.com')) {
+        await firebaseAuth.signOut();
+        toast.error('Access Denied: Please use your IndiaMART corporate ID (@indiamart.com) to login to the Employee Portal.');
+        return;
+      }
+      
       toast.success('Successfully authenticated');
     } catch (error: any) {
       toast.error(error.message);
@@ -54,7 +63,7 @@ export default function Login({ type = 'candidate' }: { type?: 'candidate' | 'ad
               <img src="/imlogo.png" alt="IndiaMART" className="h-10 object-contain mb-6 bg-white/10 p-2 rounded-lg backdrop-blur-sm" />
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 text-red-200 text-[10px] font-bold uppercase tracking-wider border border-red-500/30 mb-4">
                 <Sparkles size={12} />
-                {isAdminMode ? 'Enterprise Control' : 'Now Active'}
+                {isAdminMode ? 'Enterprise Control' : (isEmployeeMode ? 'Internal Portal' : 'Now Active')}
               </div>
               {isAdminMode ? (
                 <>
@@ -64,6 +73,16 @@ export default function Login({ type = 'candidate' }: { type?: 'candidate' | 'ad
                   </h1>
                   <p className="text-slate-300 text-lg font-medium leading-relaxed">
                     Centralized Admin Panel to manage all recruitment products and platform settings.
+                  </p>
+                </>
+              ) : isEmployeeMode ? (
+                <>
+                  <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-white">
+                    IndiaMART<br/>
+                    <span className="text-red-500">Employee Hub</span>
+                  </h1>
+                  <p className="text-slate-300 text-lg font-medium leading-relaxed">
+                    Access internal FAQ bot, company resources, and HR support.
                   </p>
                 </>
               ) : (
@@ -131,10 +150,12 @@ export default function Login({ type = 'candidate' }: { type?: 'candidate' | 'ad
               <div className="text-center mb-10">
                 <Shield className="mx-auto mb-4 text-red-600" size={48} />
                 <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-                  {isAdminMode ? 'Admin Portal' : 'Welcome'}
+                  {isAdminMode ? 'Admin Portal' : (isEmployeeMode ? 'Employee Workspace' : 'Welcome')}
                 </h2>
                 <p className="text-slate-500 mt-2 font-medium">
-                  {isAdminMode ? 'Login to manage jobs and candidates.' : 'Login to apply and track your application.'}
+                  {isAdminMode 
+                    ? 'Login to manage jobs and candidates.' 
+                    : (isEmployeeMode ? 'Use your corporate Google account.' : 'Login to apply and track your application.')}
                 </p>
               </div>
 
@@ -148,7 +169,7 @@ export default function Login({ type = 'candidate' }: { type?: 'candidate' | 'ad
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="admin@indiamart.com"
+                        placeholder="admin@teamstellarx.com"
                         className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all outline-none font-medium placeholder:text-slate-400"
                         required
                       />
@@ -179,6 +200,20 @@ export default function Login({ type = 'candidate' }: { type?: 'candidate' | 'ad
                     </button>
                   </div>
                 </form>
+              ) : isEmployeeMode ? (
+                <div className="space-y-6">
+                  <button
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                    className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base hover:bg-slate-800 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 shadow-xl shadow-slate-200"
+                  >
+                    <Shield className="text-red-500" size={20} />
+                    {loading ? 'Verifying...' : 'IndiaMART Google Login'}
+                  </button>
+                  <p className="text-center text-slate-500 text-xs font-medium px-4 leading-relaxed">
+                    This portal is restricted to @indiamart.com employees only. Unauthorized access is prohibited.
+                  </p>
+                </div>
               ) : (
                 <div className="space-y-6">
                   <button
@@ -190,23 +225,7 @@ export default function Login({ type = 'candidate' }: { type?: 'candidate' | 'ad
                     {loading ? 'Please wait...' : 'Candidate Login'}
                   </button>
                   <p className="text-center text-slate-500 text-xs font-medium px-4">
-                    By continuing, you agree to IndiaMART's Terms of Service and Privacy Policy.
-                  </p>
-                </div>
-              )}
-              {(!isAdminMode) && (
-                <div className="mt-8 pt-8 border-t border-slate-100">
-                  <p className="text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4">IndiaMART Employees</p>
-                  <button
-                    onClick={handleGoogleLogin}
-                    disabled={loading}
-                    className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base hover:bg-slate-800 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 shadow-xl shadow-slate-200"
-                  >
-                    <Shield className="text-red-500" size={20} />
-                    {loading ? 'Verifying...' : 'Employee Portal Login'}
-                  </button>
-                  <p className="text-center text-[9px] text-slate-400 mt-3 font-bold uppercase tracking-widest leading-relaxed">
-                    Access internal FAQ bot & resources.<br/>Use your @indiamart.com account.
+                    By continuing, you agree to HirePilot's Terms of Service and Privacy Policy.
                   </p>
                 </div>
               )}

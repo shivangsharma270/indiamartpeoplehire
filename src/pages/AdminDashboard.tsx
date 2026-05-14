@@ -164,178 +164,101 @@ export default function AdminDashboard() {
   if (loading) return <div className="p-20 text-center flex h-screen items-center justify-center"><div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div></div>;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
-      {/* Centralized sidebar */}
-      <aside className={`${isSidebarOpen ? 'w-44' : 'w-0'} bg-slate-900 text-slate-300 flex flex-col shrink-0 transition-all duration-300 overflow-hidden relative border-r border-white/5`}>
-        <div className="p-4 border-b border-slate-800 min-w-[176px] relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-950">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none animate-pulse"></div>
-          <div className="flex items-center gap-2.5 mb-2 relative z-10">
-            <div className="p-1 bg-white/10 rounded border border-white/10 backdrop-blur-md">
-              <img src="/imlogo.png" alt="IndiaMART" className="h-4 object-contain brightness-0 invert" />
-            </div>
-          </div>
-          <h1 className="text-base font-black text-white tracking-tight flex items-start flex-col gap-0.5 mt-2 relative z-10">
-            <span className="text-[8px] font-black uppercase text-slate-500 tracking-[0.2em]">IndiaMART</span>
-            <span className="leading-tight">PeopleFlow <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-400">AI</span></span>
-          </h1>
-        </div>
-        
-        <div className="p-2.5 flex-1 overflow-auto space-y-5 text-xs">
-          <div>
-             <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 mb-2.5 px-2">Ecosystem</div>
-             <div className="space-y-0.5">
-               <button 
-                 onClick={() => setActiveProduct('hirepilot')}
-                 className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-bold transition-all duration-200 ${activeProduct === 'hirepilot' ? 'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg shadow-red-900/40 translate-x-0.5' : 'hover:bg-white/5 text-slate-400 hover:text-slate-200'}`}
-               >
-                 <Box size={14} className={activeProduct === 'hirepilot' ? 'text-white' : 'text-slate-500'} />
-                 <span>HirePilot</span>
-               </button>
-               <button 
-                 className="w-full flex items-center justify-between px-3 py-2 rounded-lg font-bold hover:bg-white/5 text-slate-500 transition-colors opacity-50 cursor-not-allowed"
-                 disabled
-               >
-                 <div className="flex items-center gap-2.5">
-                   <Box size={14} />
-                   <span>Interview</span>
-                 </div>
-                 <span className="text-[7px] font-black bg-white/5 text-slate-600 px-1.5 py-0.5 rounded-sm uppercase">Soon</span>
-               </button>
-                <button 
-                 className="w-full flex items-center justify-between px-3 py-2 rounded-lg font-bold hover:bg-white/5 text-slate-500 transition-colors opacity-50 cursor-not-allowed"
-                 disabled
-               >
-                 <div className="flex items-center gap-2.5">
-                   <Box size={14} />
-                   <span>Onboard</span>
-                 </div>
-                 <span className="text-[7px] font-black bg-white/5 text-slate-600 px-1.5 py-0.5 rounded-sm uppercase">Soon</span>
-               </button>
-             </div>
-          </div>
-          
-          <div>
-             <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 mb-2.5 px-2">Governance</div>
-             <div className="space-y-0.5">
-               <button className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-bold hover:bg-white/5 text-slate-400 hover:text-white transition-all">
-                 <Users size={14} className="text-slate-500" />
-                 <span>IAM & Roles</span>
-               </button>
-               <button className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-bold hover:bg-white/5 text-slate-400 hover:text-white transition-all">
-                 <Settings size={14} className="text-slate-500" />
-                 <span>Environment</span>
-               </button>
-             </div>
-          </div>
-
-          <div className="pt-4 border-t border-slate-800">
-             <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 mb-2.5 px-2">Knowledge</div>
-             <div className="space-y-0.5">
-               <button className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-bold hover:bg-white/5 text-slate-400 hover:text-white transition-all">
-                 <Box size={14} className="text-slate-500" />
-                 <span>Help Center</span>
-               </button>
-             </div>
-          </div>
-        </div>
-      </aside>
-
+    <div className="flex flex-col h-full bg-slate-50">
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-full overflow-hidden">
         {activeProduct === 'hirepilot' ? (
           <>
-            <div className="px-8 py-6 border-b border-slate-200 bg-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0 shadow-[0_1px_2px_rgba(0,0,0,0.05)] z-10 w-full relative">
-              <div className="flex items-center gap-5">
-                 <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2.5 rounded-xl bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-all border border-slate-100 shadow-sm">
-                    <Menu size={18} />
-                 </button>
-                 <div className="w-14 h-14 bg-gradient-to-br from-red-50 to-rose-50 rounded-2xl flex items-center justify-center border border-red-100/50 shadow-sm shrink-0">
-                    <Sparkles className="text-red-500" size={28} />
+            <div className="px-4 md:px-8 py-4 md:py-6 border-b border-slate-200 bg-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0 shadow-[0_1px_2px_rgba(0,0,0,0.05)] z-10 w-full relative">
+              <div className="flex items-center gap-3 md:gap-5">
+                 <div className="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-red-50 to-rose-50 rounded-xl md:rounded-2xl flex items-center justify-center border border-red-100/50 shadow-sm shrink-0">
+                    <Sparkles className="text-red-500" size={24} />
                  </div>
                  <div>
-                   <h2 className="text-2xl font-black text-slate-900 tracking-tight">HirePilot AI <span className="text-slate-300 font-light mx-2">/</span> Command</h2>
-                   <div className="flex items-center gap-2 text-xs text-slate-500 font-bold mt-0.5">
-                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                   <h2 className="text-lg md:text-2xl font-black text-slate-900 tracking-tight">HirePilot AI <span className="text-slate-300 font-light mx-1 md:mx-2">/</span> Command</h2>
+                   <div className="flex items-center gap-2 text-[10px] md:text-xs text-slate-500 font-bold mt-0.5">
+                     <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                      Live Talent Intake
                    </div>
                  </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full md:w-auto">
                 <button
                   onClick={handleConnectCalendar}
-                  className={`px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-lg active:scale-95 border ${isCalendarConnected ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-white text-slate-600 border-slate-200'}`}
+                  className={`flex-1 md:flex-none px-4 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95 border ${isCalendarConnected ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-white text-slate-600 border-slate-200'}`}
                 >
-                  <Calendar size={18} />
-                  {isCalendarConnected ? 'Calendar Ready' : 'Connect Calendar'}
+                  <Calendar size={16} />
+                  {isCalendarConnected ? 'Ready' : 'Calendar'}
                 </button>
                 <button
                   onClick={() => setShowJobModal(true)}
-                  className="px-5 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-red-700 transition-all shadow-lg shadow-red-100 active:scale-95"
+                  className="flex-1 md:flex-none px-4 md:px-5 py-2 md:py-2.5 bg-red-600 text-white rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-2 hover:bg-red-700 transition-all shadow-lg shadow-red-100 active:scale-95"
                 >
-                  <Plus size={18} />
+                  <Plus size={16} />
                   Post Position
                 </button>
               </div>
             </div>
 
-            <div className="flex-1 overflow-hidden flex flex-col p-6 space-y-6">
-              <section className="grid md:grid-cols-3 gap-4 shrink-0">
+            <div className="flex-1 overflow-auto p-4 md:p-6 space-y-6">
+              <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 shrink-0">
                 <CompactStatsCard icon={<Briefcase size={18} />} label="Open Roles" value={jobs.length} color="red" />
                 <CompactStatsCard icon={<Users size={18} />} label="Applicants" value={applications.length} color="blue" />
-                <CompactStatsCard icon={<TrendingUp size={18} />} label="Avg Score" value={
+                <CompactStatsCard icon={<TrendingUp size={18} />} label="Avg AI Score" value={
                   applications.length > 0 
                   ? Math.round(applications.reduce((acc, app) => acc + (app.ai_score?.score || 0), 0) / applications.length)
                   : 0
                 } suffix="%" color="emerald" />
               </section>
 
-              <div className="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-row min-h-0 overflow-hidden">
-                <div className="w-64 border-r border-slate-100 flex flex-col shrink-0 bg-slate-50/50">
-                  <div className="p-4 border-b border-slate-100 shrink-0">
-                    <h3 className="text-sm font-bold text-slate-800">Positions</h3>
+              <div className="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row min-h-0 overflow-hidden">
+                <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col shrink-0 bg-slate-50/50">
+                  <div className="p-4 border-b border-slate-100 shrink-0 flex justify-between items-center">
+                    <h3 className="text-sm font-bold text-slate-800">Job Filters</h3>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest md:hidden">Scroll for more</span>
                   </div>
-                  <div className="flex-1 overflow-y-auto p-2 space-y-1">
+                  <div className="flex md:flex-col overflow-x-auto md:overflow-y-auto p-2 gap-1 no-scrollbar">
                     <button 
                       onClick={() => setSelectedJobId('all')} 
-                      className={`w-full text-left px-3 py-2 text-xs font-bold rounded-lg transition-colors ${selectedJobId === 'all' ? 'bg-red-50 text-red-600' : 'text-slate-600 hover:bg-slate-100'}`}
+                      className={`whitespace-nowrap shrink-0 md:w-full text-left px-3 py-2 text-xs font-bold rounded-lg transition-colors ${selectedJobId === 'all' ? 'bg-red-50 text-red-600' : 'text-slate-600 hover:bg-slate-100'}`}
                     >
-                      All Positions ({applications.length})
+                      All ({applications.length})
                     </button>
                     {jobs.map(job => (
                       <button 
                         key={job.id}
                         onClick={() => setSelectedJobId(job.id)} 
-                        className={`w-full text-left px-3 py-2 text-xs font-bold rounded-lg transition-colors ${selectedJobId === job.id ? 'bg-red-50 text-red-600' : 'text-slate-600 hover:bg-slate-100'}`}
+                        className={`whitespace-nowrap shrink-0 md:w-full text-left px-3 py-2 text-xs font-bold rounded-lg transition-colors ${selectedJobId === job.id ? 'bg-red-50 text-red-600' : 'text-slate-600 hover:bg-slate-100'}`}
                       >
-                        <div className="truncate">{job.title}</div>
-                        <div className="text-[10px] font-medium opacity-70 mt-0.5">{applications.filter(a => a.job_id === job.id).length} applicants</div>
+                        <div className="truncate max-w-[120px] md:max-w-none">{job.title}</div>
+                        <div className="text-[10px] font-medium opacity-70 mt-0.5">{applications.filter(a => a.job_id === job.id).length}</div>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div className="flex-1 flex flex-col min-w-0">
-                  <div className="flex items-center justify-between p-4 border-b border-slate-100 shrink-0">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between p-4 border-b border-slate-100 gap-3 shrink-0">
                     <div className="flex gap-2">
-                       <button onClick={() => setViewMode('all')} className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${viewMode === 'all' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>All Applicants</button>
-                       <button onClick={() => setViewMode('shortlisted')} className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${viewMode === 'shortlisted' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}>Shortlisted</button>
+                       <button onClick={() => setViewMode('all')} className={`flex-1 sm:flex-none px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${viewMode === 'all' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>All</button>
+                       <button onClick={() => setViewMode('shortlisted')} className={`flex-1 sm:flex-none px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${viewMode === 'shortlisted' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}>Shortlisted</button>
                     </div>
                     <div className="relative">
                       <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
                       <input 
                         placeholder="Search candidates..." 
-                        className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500 w-64"
+                        className="w-full sm:w-64 pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
                     </div>
                   </div>
 
-                  <div className="flex-1 overflow-auto">
+                  <div className="flex-1 overflow-x-auto">
                   <AnimatePresence mode="wait">
                       <motion.table 
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="w-full text-left border-collapse"
+                        className="w-full text-left border-collapse min-w-[700px]"
                       >
                         <thead className="sticky top-0 bg-slate-50 text-[10px] uppercase tracking-wider font-bold text-slate-500 border-b border-slate-200 z-10">
                           <tr>

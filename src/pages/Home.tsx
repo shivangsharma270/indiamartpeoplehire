@@ -158,7 +158,7 @@ export default function Home() {
               </div>
 
               <Link to="/portal" className="inline-flex items-center justify-center bg-blue-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors w-full sm:w-auto shadow-md shadow-blue-100 font-sans">
-                Enter Employee Portal <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
+                Access Employee Hub <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
           </div>

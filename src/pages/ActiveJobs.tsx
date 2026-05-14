@@ -81,27 +81,27 @@ export default function ActiveJobs() {
   return (
     <div className="flex flex-col h-full overflow-hidden bg-slate-50">
       <div className="p-6 border-b border-slate-200 bg-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
-        <div>
-          <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <Briefcase size={22} className="text-red-600" />
-            Active Jobs
-          </h2>
-          <p className="text-xs text-slate-500 font-medium">Manage and view all active job postings.</p>
-        </div>
-        <div className="relative">
-          <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
-          <input 
-            placeholder="Search jobs..." 
-            className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-red-500 w-64"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
+            <div>
+              <h2 className="text-lg md:text-xl font-bold text-slate-800 flex items-center gap-2">
+                <Briefcase size={20} className="text-red-600" />
+                Active Positions
+              </h2>
+              <p className="text-[10px] md:text-xs text-slate-500 font-medium">Manage all recruitment openings.</p>
+            </div>
+            <div className="relative w-full md:w-auto">
+              <Search className="absolute left-3 top-2 text-slate-400" size={14} />
+              <input 
+                placeholder="Search jobs..." 
+                className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500 md:w-64"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
 
-      <div className="flex-1 overflow-auto p-6">
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <table className="w-full text-left border-collapse min-w-[800px]">
+      <div className="flex-1 overflow-x-auto p-4 md:p-6 pb-20">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden min-w-[800px] lg:min-w-0">
+          <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50 text-[10px] uppercase tracking-wider font-bold text-slate-500 border-b border-slate-200">
               <tr>
                 <th className="px-6 py-4">Position</th>
