@@ -1,23 +1,76 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bot, Info, Ticket, CheckSquare, Sparkles, LayoutGrid, MessageSquare, ArrowRight, ShieldCheck, Heart, Coffee, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Bot, Info, Ticket, CheckSquare, Sparkles, LayoutGrid, MessageSquare, ArrowRight, ShieldCheck, Heart, Coffee, Clock, CheckCircle2, AlertCircle, LogOut, User } from 'lucide-react';
 import HRChatbot from '../components/chatbot/HRChatbot';
+import ExitInterviewChat from '../components/exit/ExitInterviewChat';
 import { useAuth } from '../App';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { toast } from 'sonner';
 
+import { useNavigate } from 'react-router-dom';
+
 export default function EmployeePortal() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'chatbot' | 'tickets' | 'directory' | 'benefits'>('chatbot');
   const [tickets, setTickets] = useState<any[]>([]);
   const [loadingTickets, setLoadingTickets] = useState(false);
+  const [exitRequest, setExitRequest] = useState<any>(null);
+  const [loadingExit, setLoadingExit] = useState(false);
 
   useEffect(() => {
-    if (activeTab === 'tickets' && user) {
-      fetchTickets();
+    if (user) {
+      if (activeTab === 'tickets') fetchTickets();
+      fetchExitStatus();
     }
   }, [activeTab, user]);
+
+  const fetchExitStatus = async () => {
+    setLoadingExit(true);
+    try {
+      const { data, error } = await supabase
+        .from('exit_requests')
+        .select('*')
+        .eq('user_id', user.id || user.uid)
+        .maybeSingle();
+
+      if (error) throw error;
+      setExitRequest(data);
+    } catch (error) {
+      console.error('Error fetching exit status:', error);
+    } finally {
+      setLoadingExit(false);
+    }
+  };
+
+  const [showConfirmQuit, setShowConfirmQuit] = useState(false);
+  const [isSubmittingQuit, setIsSubmittingQuit] = useState(false);
+
+  const handleQuitRequest = async () => {
+    setIsSubmittingQuit(true);
+    try {
+      const payload = {
+        user_id: user.id || user.uid,
+        user_name: user.displayName || user.email?.split('@')[0] || 'Employee',
+        user_email: user.email,
+        status: 'pending'
+      };
+      
+      const { data, error } = await supabase.from('exit_requests').insert(payload).select().single();
+
+      if (error) throw error;
+      
+      setExitRequest(data);
+      setShowConfirmQuit(false);
+      toast.success("Resignation request submitted to HR");
+    } catch (error: any) {
+      console.error("Handle quit request error:", error);
+      toast.error(`Failed to submit request: ${error.message || 'Unknown error'}`);
+    } finally {
+      setIsSubmittingQuit(false);
+    }
+  };
 
   const fetchTickets = async () => {
     setLoadingTickets(true);
@@ -25,7 +78,7 @@ export default function EmployeePortal() {
       const { data, error } = await supabase
         .from('employee_tickets')
         .select('*')
-        .eq('user_id', user.uid)
+        .eq('user_id', user.id || user.uid)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -95,10 +148,17 @@ export default function EmployeePortal() {
             <div className="space-y-1">
               <NavButton 
                 active={activeTab === 'chatbot'} 
-                icon={<MessageSquare size={18} />} 
+                icon={<ShieldCheck size={18} />} 
                 title="HR Assistant" 
                 subtitle="Policy & procedure AI bot"
                 onClick={() => setActiveTab('chatbot')} 
+              />
+              <NavButton 
+                active={false} 
+                icon={<User size={18} className="text-red-500" />} 
+                title="My Profile" 
+                subtitle="Identity & career info"
+                onClick={() => navigate('/portal/profile')} 
               />
               <NavButton 
                 active={activeTab === 'tickets'} 
@@ -123,6 +183,64 @@ export default function EmployeePortal() {
                 onClick={() => {}} 
                 disabled
               />
+              {!exitRequest && (
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowConfirmQuit(true)}
+                    className="w-full mt-4 p-4 rounded-2xl bg-slate-100 hover:bg-red-50 text-slate-500 hover:text-red-600 transition-all flex items-center gap-4 group border border-slate-200 border-dashed"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shrink-0 border border-slate-200 group-hover:border-red-200">
+                      <LogOut size={18} />
+                    </div>
+                    <div className="text-left">
+                      <h4 className="font-black text-sm uppercase tracking-tight">I want to Quit</h4>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Request resignation</p>
+                    </div>
+                  </button>
+
+                  <AnimatePresence>
+                    {showConfirmQuit && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="absolute bottom-full left-0 right-0 mb-4 bg-white rounded-3xl border border-red-100 shadow-2xl p-6 z-50 overflow-hidden"
+                      >
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-full -mr-12 -mt-12"></div>
+                        <h4 className="text-lg font-black text-slate-900 tracking-tight mb-2 relative z-10">Confirm Resignation?</h4>
+                        <p className="text-xs font-medium text-slate-500 mb-6 relative z-10 leading-relaxed">
+                          This will formally notify the HR department. You will be able to start your exit interview once approved.
+                        </p>
+                        <div className="flex gap-2 relative z-10">
+                          <button 
+                            onClick={handleQuitRequest}
+                            disabled={isSubmittingQuit}
+                            className="flex-1 py-3 bg-red-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-colors shadow-lg shadow-red-100"
+                          >
+                            {isSubmittingQuit ? 'Submitting...' : 'Confirm'}
+                          </button>
+                          <button 
+                            onClick={() => setShowConfirmQuit(false)}
+                            disabled={isSubmittingQuit}
+                            className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+              {exitRequest && (
+                <NavButton 
+                  active={activeTab === 'exit-interview'} 
+                  icon={<Sparkles size={18} className="text-red-500" />} 
+                  title="Exit Process" 
+                  subtitle={exitRequest.status.replace('_', ' ')}
+                  onClick={() => setActiveTab('exit-interview')} 
+                />
+              )}
             </div>
           </div>
 
@@ -270,6 +388,75 @@ export default function EmployeePortal() {
                     ))}
                   </div>
                 )}
+              </motion.div>
+            ) : activeTab === 'exit-interview' ? (
+              <motion.div 
+                key="exit-interview"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6"
+              >
+                 <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center space-y-6 mb-8">
+                    <div className="w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center mx-auto">
+                      <ShieldCheck size={32} />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-black text-slate-900 tracking-tight">Resignation Status</h3>
+                      <p className="text-slate-500 text-sm font-medium mt-1 uppercase tracking-widest">Case ID: {exitRequest.id.split('-')[0]}</p>
+                    </div>
+                    
+                    <div className="flex justify-center gap-8 py-6 border-y border-slate-50">
+                      <div className="text-center">
+                        <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${exitRequest.status === 'pending' ? 'bg-amber-500' : 'bg-emerald-500'}`}></div>
+                        <span className="text-[10px] font-black uppercase text-slate-400">Request</span>
+                      </div>
+                      <div className="w-12 h-[1px] bg-slate-200 mt-4"></div>
+                      <div className="text-center">
+                        <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${exitRequest.status === 'approved' ? 'bg-amber-500' : (['interview_completed', 'rejected'].includes(exitRequest.status) ? 'bg-emerald-500' : 'bg-slate-200')}`}></div>
+                        <span className="text-[10px] font-black uppercase text-slate-400">HR Approval</span>
+                      </div>
+                      <div className="w-12 h-[1px] bg-slate-200 mt-4"></div>
+                      <div className="text-center">
+                        <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${exitRequest.status === 'interview_completed' ? 'bg-emerald-500' : 'bg-slate-200'}`}></div>
+                        <span className="text-[10px] font-black uppercase text-slate-400">Interview</span>
+                      </div>
+                    </div>
+
+                    {exitRequest.status === 'pending' && (
+                      <div className="bg-amber-50 text-amber-700 p-4 rounded-2xl border border-amber-100 flex items-center justify-center gap-3">
+                        <Clock size={18} />
+                        <span className="text-sm font-bold">HR is reviewing your resignation request.</span>
+                      </div>
+                    )}
+
+                    {exitRequest.status === 'approved' && (
+                       <div className="space-y-4">
+                          <div className="bg-emerald-50 text-emerald-700 p-4 rounded-2xl border border-emerald-100 flex items-center justify-center gap-3">
+                            <CheckCircle2 size={18} />
+                            <span className="text-sm font-bold">Resignation Approved. Please complete your AI Exit Interview below.</span>
+                          </div>
+                       </div>
+                    )}
+                 </div>
+
+                 {exitRequest.status === 'approved' && (
+                   <ExitInterviewChat 
+                    requestId={exitRequest.id} 
+                    userId={user.uid} 
+                    onComplete={fetchExitStatus}
+                   />
+                 )}
+
+                 {exitRequest.status === 'interview_completed' && (
+                   <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center">
+                      <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6 transform rotate-12">
+                        <Sparkles size={40} />
+                      </div>
+                      <h4 className="text-2xl font-black text-slate-900 tracking-tight">Onboarding Complete</h4>
+                      <p className="text-slate-500 mt-2 max-w-sm mx-auto font-medium">Your exit interview is finished. Our HR team will reach out with final documentation and exit clearance shortly.</p>
+                   </div>
+                 )}
               </motion.div>
             ) : null}
           </AnimatePresence>

@@ -8,12 +8,8 @@ export default function Navbar() {
   return (
     <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-200">
-            <ShieldCheck size={24} />
-          </div>
-          <span className="font-bold text-xl tracking-tight text-slate-800">PeopleFlow</span>
-        </Link>
+        <div className="flex items-center gap-2">
+        </div>
 
         <div className="flex items-center gap-6">
           {user ? (
@@ -44,14 +40,7 @@ export default function Navbar() {
                 <span className="font-medium">Sign Out</span>
               </button>
             </>
-          ) : (
-            <Link 
-              to="/login"
-              className="bg-red-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-red-700 transition-all shadow-md active:scale-95"
-            >
-              Get Started
-            </Link>
-          )}
+          ) : null}
         </div>
       </div>
     </nav>

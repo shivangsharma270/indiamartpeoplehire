@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Job, Application } from '../types';
-import { Briefcase, Trash2, Search, MapPin, Eye, ExternalLink, CheckCircle } from 'lucide-react';
+import { Briefcase, Trash2, Search, MapPin, Eye, ExternalLink, CheckCircle, AlertTriangle, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useAuth } from '../App';
 
 export default function ActiveJobs() {
+  const { role } = useAuth();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (role === 'admin') {
+      fetchData();
+    }
+  }, [role]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -36,16 +42,59 @@ export default function ActiveJobs() {
   };
 
   const handleDelete = async (jobId: string) => {
-    if (!window.confirm("Are you sure you want to delete this job?")) return;
+    setConfirmDeleteId(null);
+    setDeletingId(jobId);
+    
     try {
-      const { error } = await supabase.from('jobs').delete().eq('id', jobId);
-      if (error) throw error;
-      toast.success("Job deleted successfully");
-      fetchData();
+      console.log('--- PURGE PROCESS START ---');
+      console.log('Target Job ID:', jobId);
+      
+      // 1. Get all application IDs for this job
+      const { data: apps, error: fetchAppsError } = await supabase
+        .from('applications')
+        .select('id')
+        .eq('job_id', jobId);
+      
+      if (fetchAppsError) {
+        throw new Error(`Data fetch failed: ${fetchAppsError.message}`);
+      }
+
+      if (apps && apps.length > 0) {
+        const appIds = apps.map(a => a.id);
+        console.log(`Step 1: Found ${appIds.length} dependent applications.`);
+        
+        // 2. Delete AI scores
+        await supabase.from('ai_scores').delete().in('application_id', appIds);
+        
+        // 3. Delete Interviews
+        await supabase.from('interviews').delete().in('application_id', appIds);
+        
+        // 4. Delete Applications
+        const { error: appDeleteError } = await supabase.from('applications').delete().eq('job_id', jobId);
+        if (appDeleteError) throw new Error(`App deletion failed: ${appDeleteError.message}`);
+      }
+
+      // 5. Finally delete the job
+      const { error: jobDeleteError } = await supabase
+        .from('jobs')
+        .delete()
+        .eq('id', jobId);
+      
+      if (jobDeleteError) throw new Error(`Job deletion failed: ${jobDeleteError.message}`);
+      
+      toast.success("Job and all associated records purged successfully");
+      await fetchData();
     } catch (error: any) {
-      toast.error(error.message);
+      console.error('Purge Error:', error);
+      toast.error(`Purge Failed: ${error.message || 'Database error'}`);
+    } finally {
+      setDeletingId(null);
     }
   };
+
+  if (role !== 'admin') {
+    return <Navigate to="/login" />;
+  }
 
   const handleUpdateJobStatus = async (jobId: string, status: 'active' | 'filled') => {
     try {
@@ -178,11 +227,16 @@ export default function ActiveJobs() {
                               <ExternalLink size={16} />
                             </Link>
                             <button 
-                              onClick={() => handleDelete(job.id)}
-                              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                              onClick={() => setConfirmDeleteId(job.id)}
+                              disabled={deletingId === job.id}
+                              className={`p-1.5 rounded-lg transition-all ${deletingId === job.id ? 'text-slate-300 cursor-not-allowed' : 'text-slate-400 hover:text-red-600 hover:bg-red-50'}`}
                               title="Delete Job"
                             >
-                              <Trash2 size={16} />
+                              {deletingId === job.id ? (
+                                <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                              ) : (
+                                <Trash2 size={16} />
+                              )}
                             </button>
                           </div>
                         </td>
@@ -195,6 +249,41 @@ export default function ActiveJobs() {
           </table>
         </div>
       </div>
+
+      <AnimatePresence>
+        {confirmDeleteId && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-slate-200"
+            >
+              <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4 mx-auto">
+                <AlertTriangle className="text-red-600" size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 text-center mb-2">Delete Position?</h3>
+              <p className="text-sm text-slate-500 text-center mb-6">
+                This will permanently remove the job and all associated candidate applications, scores, and interview records. This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setConfirmDeleteId(null)}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => handleDelete(confirmDeleteId)}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-red-600 hover:bg-red-700 transition-colors shadow-lg shadow-red-200"
+                >
+                  Delete All
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

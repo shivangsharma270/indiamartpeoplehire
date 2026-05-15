@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../App';
-import { LayoutDashboard, Briefcase, User, ShieldCheck, Mail, LogOut, X } from 'lucide-react';
+import { LayoutDashboard, Briefcase, User, ShieldCheck, Mail, LogOut, X, Zap, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
 
@@ -26,10 +26,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       { label: 'Dashboard', path: '/admin', icon: LayoutDashboard },
       { label: 'Active Jobs', path: '/admin/jobs', icon: Briefcase },
       { label: 'Employee Track', path: '/admin/employee-track', icon: ShieldCheck },
+      { label: 'L&D Planner', path: '/admin/ld-planner', icon: Zap },
+      { label: 'Exit Analysis', path: '/admin/exit-management', icon: LogOut },
     ];
   } else if (role === 'employee') {
     menuItems = [
       { label: 'Employee Hub', path: '/portal', icon: ShieldCheck },
+      { label: 'Learning & Dev', path: '/portal/ld', icon: BookOpen },
+      { label: 'My Profile', path: '/portal/profile', icon: User },
     ];
   } else {
     menuItems = [

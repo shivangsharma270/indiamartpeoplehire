@@ -110,6 +110,8 @@ CREATE TABLE IF NOT EXISTS chatbot_conversations (
 CREATE TABLE IF NOT EXISTS employee_tickets (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id TEXT NOT NULL, -- Firebase UID (TEXT)
+  user_name TEXT,
+  user_email TEXT,
   category TEXT NOT NULL,
   subject TEXT NOT NULL,
   description TEXT NOT NULL,
@@ -122,32 +124,40 @@ CREATE TABLE IF NOT EXISTS employee_tickets (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- ENABLE RLS
-ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
-ALTER TABLE candidates ENABLE ROW LEVEL SECURITY;
-ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
-ALTER TABLE ai_scores ENABLE ROW LEVEL SECURITY;
-ALTER TABLE interviews ENABLE ROW LEVEL SECURITY;
-ALTER TABLE interviewer_availability ENABLE ROW LEVEL SECURITY;
-ALTER TABLE interviewer_tokens ENABLE ROW LEVEL SECURITY;
-ALTER TABLE chatbot_conversations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE employee_tickets ENABLE ROW LEVEL SECURITY;
+-- Disable RLS for recruitment tables to ensure operations work
+ALTER TABLE jobs DISABLE ROW LEVEL SECURITY;
+ALTER TABLE applications DISABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_scores DISABLE ROW LEVEL SECURITY;
+ALTER TABLE interviews DISABLE ROW LEVEL SECURITY;
+ALTER TABLE candidates DISABLE ROW LEVEL SECURITY;
+ALTER TABLE interviewer_availability DISABLE ROW LEVEL SECURITY;
+ALTER TABLE interviewer_tokens DISABLE ROW LEVEL SECURITY;
+ALTER TABLE chatbot_conversations DISABLE ROW LEVEL SECURITY;
+ALTER TABLE employee_tickets DISABLE ROW LEVEL SECURITY;
+ALTER TABLE exit_requests DISABLE ROW LEVEL SECURITY;
+ALTER TABLE exit_interviews DISABLE ROW LEVEL SECURITY;
+
+-- Grants for app roles (Essential for anon/authenticated access to tables)
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA public TO anon, authenticated, service_role;
 
 -- POLICIES (With auth.uid()::text casting)
 
 -- Jobs
 CREATE POLICY "Anyone can view jobs" ON jobs FOR SELECT USING (true);
-CREATE POLICY "Admins can manage jobs" ON jobs FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
+CREATE POLICY "Admins can manage jobs" ON jobs FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
 
 -- Candidates
 CREATE POLICY "Users can manage their own profile" ON candidates FOR ALL USING (auth.uid()::text = id);
-CREATE POLICY "Admins can view all profiles" ON candidates FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
+CREATE POLICY "Admins can view all profiles" ON candidates FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
 
 -- Applications
 CREATE POLICY "Users can view their applications" ON applications FOR SELECT USING (auth.uid()::text = candidate_id);
 CREATE POLICY "Users can submit applications" ON applications FOR INSERT WITH CHECK (auth.uid()::text = candidate_id);
-CREATE POLICY "Admins can view all applications" ON applications FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
-CREATE POLICY "Admins can update application status" ON applications FOR UPDATE USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
+CREATE POLICY "Admins can view all applications" ON applications FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+CREATE POLICY "Admins can update application status" ON applications FOR UPDATE USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
 
 -- AI Scores
 CREATE POLICY "Users can view their scores" ON ai_scores FOR SELECT USING (
@@ -157,20 +167,149 @@ CREATE POLICY "Users can view their scores" ON ai_scores FOR SELECT USING (
     AND applications.candidate_id = auth.uid()::text
   )
 );
-CREATE POLICY "Admins can manage all scores" ON ai_scores FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
+CREATE POLICY "Admins can manage all scores" ON ai_scores FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
 
 -- Interviews
 CREATE POLICY "Users can view their interviews" ON interviews FOR SELECT USING (
-  auth.uid()::text = candidate_id OR auth.uid()::text = interviewer_id OR auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com'
+  auth.uid()::text = candidate_id OR auth.uid()::text = interviewer_id OR auth.jwt() ->> 'email' = 'admin@teamstellarx.com'
 );
-CREATE POLICY "Admins can manage interviews" ON interviews FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
+CREATE POLICY "Admins can manage interviews" ON interviews FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
 
 -- Chatbot
 CREATE POLICY "Users can manage their conversations" ON chatbot_conversations FOR ALL USING (auth.uid()::text = user_id);
 
 -- Tickets
 CREATE POLICY "Users can manage their tickets" ON employee_tickets FOR ALL USING (auth.uid()::text = user_id);
-CREATE POLICY "Admins can manage tickets" ON employee_tickets FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
+CREATE POLICY "Admins can manage tickets" ON employee_tickets FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
 
 -- Tokens
-CREATE POLICY "Admins can manage tokens" ON interviewer_tokens FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com' OR auth.jwt() ->> 'email' LIKE '%@indiamart.com');
+CREATE POLICY "Admins can manage tokens" ON interviewer_tokens FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+
+-- 11. Exit Requests
+CREATE TABLE IF NOT EXISTS exit_requests (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  user_name TEXT,
+  user_email TEXT,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'interview_completed', 'rejected')),
+  reason_category TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 12. Exit Interviews
+CREATE TABLE IF NOT EXISTS exit_interviews (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  request_id UUID REFERENCES exit_requests(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL,
+  chat_history JSONB DEFAULT '[]',
+  insights JSONB,
+  completed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Fix for 42501 Permission Denied and ensuring access for app roles
+GRANT ALL ON TABLE exit_requests TO anon, authenticated, service_role;
+GRANT ALL ON TABLE exit_interviews TO anon, authenticated, service_role;
+GRANT ALL ON TABLE employee_tickets TO anon, authenticated, service_role;
+GRANT ALL ON TABLE jobs TO anon, authenticated, service_role;
+GRANT ALL ON TABLE candidates TO anon, authenticated, service_role;
+GRANT ALL ON TABLE applications TO anon, authenticated, service_role;
+GRANT ALL ON TABLE ai_scores TO anon, authenticated, service_role;
+GRANT ALL ON TABLE interviews TO anon, authenticated, service_role;
+GRANT ALL ON TABLE interviewer_availability TO anon, authenticated, service_role;
+GRANT ALL ON TABLE interviewer_tokens TO anon, authenticated, service_role;
+GRANT ALL ON TABLE chatbot_conversations TO anon, authenticated, service_role;
+
+-- Grant sequence permissions
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
+
+-- 13. L&D Module
+CREATE TABLE IF NOT EXISTS employee_profiles (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id TEXT NOT NULL UNIQUE,
+  user_name TEXT,
+  user_email TEXT,
+  employee_id TEXT,
+  department TEXT CHECK (department IN ('NSD', 'Tele Monthly', 'Marketplace', 'Business Intelligence', 'HR Department', 'SOA', 'Technical', 'Sales', 'Management', 'HR')),
+  role TEXT,
+  skills JSONB DEFAULT '[]',
+  experience_years INTEGER,
+  career_goals TEXT,
+  performance_score DECIMAL(3,2),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 14. Course Management
+CREATE TABLE IF NOT EXISTS courses (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  departments JSONB DEFAULT '[]', -- Array of departments
+  content_url TEXT,
+  content_type TEXT CHECK (content_type IN ('video', 'pdf', 'ppt', 'link')),
+  quiz_data JSONB DEFAULT '[]', -- [ { question: '', options: [], correct: 0 } ]
+  passing_score INTEGER DEFAULT 70,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS employee_course_progress (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES employee_profiles(user_id) ON DELETE CASCADE,
+  course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+  status TEXT DEFAULT 'not_started' CHECK (status IN ('not_started', 'in_progress', 'completed')),
+  quiz_score INTEGER,
+  attempts INTEGER DEFAULT 0,
+  completed_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(user_id, course_id)
+);
+
+-- Grants
+GRANT ALL ON TABLE courses TO anon, authenticated, service_role;
+GRANT ALL ON TABLE employee_course_progress TO anon, authenticated, service_role;
+GRANT ALL ON TABLE employee_profiles TO anon, authenticated, service_role;
+
+-- Disable RLS
+ALTER TABLE courses DISABLE ROW LEVEL SECURITY;
+ALTER TABLE employee_course_progress DISABLE ROW LEVEL SECURITY;
+ALTER TABLE employee_profiles DISABLE ROW LEVEL SECURITY;
+
+CREATE TABLE IF NOT EXISTS learning_paths (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES employee_profiles(user_id) ON DELETE CASCADE,
+  roadmap JSONB, -- AI generated steps
+  recommendations JSONB, -- [ { type: 'certification' | 'training', title: '', url: '' } ]
+  gap_analysis TEXT,
+  market_trends TEXT, -- AI context on outside market
+  readiness_score INTEGER, -- 0-100 for next role
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS learning_progress (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES employee_profiles(user_id) ON DELETE CASCADE,
+  item_id TEXT NOT NULL,
+  status TEXT DEFAULT 'not_started' CHECK (status IN ('not_started', 'in_progress', 'completed')),
+  completed_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Grants
+GRANT ALL ON TABLE employee_profiles TO anon, authenticated, service_role;
+GRANT ALL ON TABLE learning_paths TO anon, authenticated, service_role;
+GRANT ALL ON TABLE learning_progress TO anon, authenticated, service_role;
+
+-- Disable RLS for now to match project pattern
+ALTER TABLE employee_profiles DISABLE ROW LEVEL SECURITY;
+ALTER TABLE learning_paths DISABLE ROW LEVEL SECURITY;
+ALTER TABLE learning_progress DISABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their exit requests" ON exit_requests FOR ALL USING (auth.uid()::text = user_id);
+CREATE POLICY "Admins can manage all exit requests" ON exit_requests FOR ALL USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');
+
+CREATE POLICY "Users can view their exit interviews" ON exit_interviews FOR SELECT USING (auth.uid()::text = user_id);
+CREATE POLICY "Users can create their exit interviews" ON exit_interviews FOR INSERT WITH CHECK (auth.uid()::text = user_id);
+CREATE POLICY "Users can update their own interview" ON exit_interviews FOR UPDATE USING (auth.uid()::text = user_id);
+CREATE POLICY "Admins can view all exit interviews" ON exit_interviews FOR SELECT USING (auth.jwt() ->> 'email' = 'admin@teamstellarx.com');

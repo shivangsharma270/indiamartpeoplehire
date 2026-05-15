@@ -83,6 +83,8 @@ export default function HRChatbot() {
     try {
       const { error } = await supabase.from('employee_tickets').insert({
         user_id: user?.id,
+        user_name: user?.displayName || user?.email?.split('@')[0],
+        user_email: user?.email,
         category: ticketForm.category,
         subject: ticketForm.subject,
         description: ticketForm.description,

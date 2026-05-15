@@ -8,6 +8,8 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import CandidateDashboard from './pages/CandidateDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminExitManagement from './pages/AdminExitManagement';
+import AdminLdDashboard from './pages/AdminLdDashboard';
 import ActiveJobs from './pages/ActiveJobs';
 import JobDetails from './pages/JobDetails';
 import Apply from './pages/Apply';
@@ -16,10 +18,13 @@ import ApplicantDetail from './pages/ApplicantDetail';
 import HelpCenter from './pages/HelpCenter';
 import InterviewPortal from './pages/InterviewPortal';
 import EmployeePortal from './pages/EmployeePortal';
+import EmployeeLd from './pages/EmployeeLd';
 import AdminEmployeeTrack from './pages/AdminEmployeeTrack';
 
 import { auth as firebaseAuth } from './lib/firebase';
 import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
+
+import EmployeeProfile from './pages/EmployeeProfile';
 
 type UserRole = 'candidate' | 'admin' | 'employee' | null;
 
@@ -120,9 +125,13 @@ export default function App() {
                 <Route path="/admin/jobs" element={user && role === 'admin' ? <ActiveJobs /> : <Navigate to="/login" />} />
                 <Route path="/admin/applicant/:id" element={user && role === 'admin' ? <ApplicantDetail /> : <Navigate to="/login" />} />
                 <Route path="/admin/employee-track" element={user && role === 'admin' ? <AdminEmployeeTrack /> : <Navigate to="/login" />} />
+                <Route path="/admin/exit-management" element={user && role === 'admin' ? <AdminExitManagement /> : <Navigate to="/login" />} />
+                <Route path="/admin/ld-planner" element={user && role === 'admin' ? <AdminLdDashboard /> : <Navigate to="/login" />} />
                 
                 {/* Employee / Team Routes */}
                 <Route path="/portal" element={user && role === 'employee' ? <EmployeePortal /> : <Navigate to="/employee-login" />} />
+                <Route path="/portal/ld" element={user && role === 'employee' ? <EmployeeLd /> : <Navigate to="/employee-login" />} />
+                <Route path="/portal/profile" element={user && role === 'employee' ? <EmployeeProfile /> : <Navigate to="/employee-login" />} />
 
                 {/* Generic Authenticated Route */}
                 <Route path="/help" element={user ? <HelpCenter /> : <Navigate to="/login" />} />

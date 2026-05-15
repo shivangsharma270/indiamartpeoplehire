@@ -67,9 +67,12 @@ export default function AdminEmployeeTrack() {
   };
 
   const filteredTickets = tickets.filter(ticket => {
+    const searchTermLower = searchTerm.toLowerCase();
     const matchesSearch = 
-      ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      ticket.category.toLowerCase().includes(searchTerm.toLowerCase());
+      ticket.subject.toLowerCase().includes(searchTermLower) || 
+      ticket.category.toLowerCase().includes(searchTermLower) ||
+      (ticket.user_name || '').toLowerCase().includes(searchTermLower) ||
+      (ticket.user_email || '').toLowerCase().includes(searchTermLower);
     const matchesStatus = filterStatus === 'all' || ticket.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
@@ -94,7 +97,7 @@ export default function AdminEmployeeTrack() {
               className={`px-3 md:px-4 py-2 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                 filterStatus === status 
                   ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' 
-                  : 'text-slate-400 hover:text-slate-600'
+                   : 'text-slate-400 hover:text-slate-600'
               }`}
             >
               {status}
@@ -109,7 +112,7 @@ export default function AdminEmployeeTrack() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input 
               type="text" 
-              placeholder="Search by subject..."
+              placeholder="Search subject or employee..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-11 pr-4 py-2.5 md:py-3 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all font-medium placeholder:text-slate-400 text-xs md:text-sm shadow-sm"
@@ -188,11 +191,14 @@ export default function AdminEmployeeTrack() {
                   <p className="text-slate-600 text-sm font-medium line-clamp-2 mb-4 italic">"{ticket.description}"</p>
                   
                   <div className="flex items-center justify-between border-t border-slate-50 pt-4">
-                    <div className="flex items-center gap-2">
-                       <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center">
-                          <User size={14} className="text-slate-400" />
+                    <div className="flex flex-col gap-0.5">
+                       <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center">
+                             <User size={14} className="text-slate-400" />
+                          </div>
+                          <span className="text-xs font-black text-slate-900 truncate max-w-[150px]">{ticket.user_name || 'Anonymous Employee'}</span>
                        </div>
-                       <span className="text-xs font-bold text-slate-500 truncate max-w-[150px]">{ticket.user_id}</span>
+                       <span className="text-[10px] font-medium text-slate-400 ml-9">{ticket.user_email}</span>
                     </div>
                     {ticket.status === 'open' && (
                       <button className="text-blue-600 text-xs font-black uppercase tracking-widest flex items-center gap-2">
@@ -232,6 +238,13 @@ export default function AdminEmployeeTrack() {
                       <span className="text-[10px] font-black uppercase tracking-widest">Case ID: {selectedTicket.id.split('-')[0]}</span>
                     </div>
                     <h2 className="text-2xl font-black text-slate-900 tracking-tight">{selectedTicket.subject}</h2>
+                    <div className="flex items-center gap-2 mt-2">
+                       <span className="text-xs font-bold text-red-600">{selectedTicket.user_name}</span>
+                       <span className="text-slate-300">•</span>
+                       <a href={`mailto:${selectedTicket.user_email}`} className="text-xs font-bold text-slate-500 hover:text-red-600 underline">
+                         {selectedTicket.user_email}
+                       </a>
+                    </div>
                   </div>
                   <button 
                     onClick={() => setSelectedTicket(null)}
