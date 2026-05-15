@@ -309,7 +309,7 @@ function StatCard({ label, value, icon, color }: any) {
   return (
     <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
        <div className={`p-4 rounded-2xl ${colors} border`}>
-          {React.cloneElement(icon as React.ReactElement, { size: 24 })}
+          {React.cloneElement(icon as React.ReactElement<any>, { size: 24 })}
        </div>
        <div>
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{label}</p>

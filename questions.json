@@ -1,247 +1,723 @@
 [
   {
     "id": "1",
-    "category": "Business/Process Related",
-    "question": "How can we create Forums for creating Case Studies?",
-    "keywords": ["forum", "case study", "product ideas", "AOP", "feedback", "open house"],
-    "answer": "Multiple forums are there where case studies and product ideas are discussed. AOPs are the forum where product ideas are co-created. Employees should regularly use the IM's product, be updated on the new features and share continuous ideas or feedback to improve it. If you have new ideas, suggestions, it can be shared directly with the product owner, functional team groups, reports and mails. Leaders shared that forums like these (open house) can be utilized for this purpose. Ideas can be shared with the manager directly and can be taken up further. HOD asked DRs to make such a forum, if required."
+    "category": "Attendance",
+    "question": "What are the official office timings and flexible working window for WFO employees?",
+    "keywords": ["office timings", "WFO", "flexible working", "9 hours", "8:30 AM", "7:30 PM", "work from office"],
+    "answer": "The standard office timings are 9:00 AM to 6:00 PM, totaling 9 hours including a 1-hour break. Employees have a flexible window to complete their 9 working hours anywhere between 8:30 AM and 7:30 PM and still be marked present for the day."
   },
   {
     "id": "2",
-    "category": "Business/Process Related",
-    "question": "What are the next big initiatives or upcoming projects planned for IndiaMART?",
-    "keywords": ["initiatives", "upcoming projects", "launch mails", "product meets", "AOP", "IM Sangam", "management session"],
-    "answer": "Launch mails, Product Meets, Annual AOP, IM Sangam, and Management Occasional Sessions are the existing forums where such upcoming project ideas are co-created."
+    "category": "Attendance",
+    "question": "How is attendance captured for Work from Office (WFO) employees?",
+    "keywords": ["attendance", "WFO", "biometric", "finger scan", "sign in", "sign out", "punch"],
+    "answer": "Attendance is captured through Sign In and Sign Out via biometric Finger Scan devices installed at each floor of the office. Biometric attendance is mandatory for all WFO employees."
   },
   {
     "id": "3",
-    "category": "Promotion/Career Progression",
-    "question": "How can an employee transition onto the payroll of IndiaMART?",
-    "keywords": ["payroll", "transition", "role vacancy", "A+ rating", "HOD recommendation", "QA analyst"],
-    "answer": "To transition onto the payroll of IndiaMART, three criteria must be met: 1) availability of the role vacancy, 2) A+ performance rating, and 3) a recommendation from the HOD, post which an offer can be rolled out for QA-Analyst role."
+    "category": "Attendance",
+    "question": "What are the criteria for a half-day mark versus a full-day mark?",
+    "keywords": ["half day", "full day", "4.5 hours", "7 hours", "attendance mark", "working hours"],
+    "answer": "A half-day is marked when an employee's logged hours are equal to or exceed 4.5 hours but are less than 7 hours. Working 7 or more hours qualifies for a full-day. Working less than 4.5 hours does not qualify for a half-day or full-day mark."
   },
   {
     "id": "4",
-    "category": "Promotion/Career Progression",
-    "question": "When should employees expect a promotion?",
-    "keywords": ["promotion", "career progression", "appraisal", "performance", "work experience"],
-    "answer": "Career progression and promotions are determined based on factors such as demonstrated performance and work experience. Employees are encouraged to discuss their career aspirations with their manager and HOD for further clarity, taking into account their individual performance. Career Progression is a part of the annual appraisal process."
+    "category": "Attendance",
+    "question": "What is Attendance Regularization (AR) and what are its usage limits?",
+    "keywords": ["AR", "attendance regularization", "missed punch", "business travel", "3 AR", "same day"],
+    "answer": "AR is a mechanism to correct attendance in cases where punch-in/punch-out was missed or an employee was on business travel. WFO employees can raise a maximum of 3 AR requests per month. AR can also be applied if an employee worked a minimum of 7 hours but less than 9 hours. Every AR request must be raised on the same working day."
   },
   {
     "id": "5",
-    "category": "Job Rotation",
-    "question": "Why is there so much team reshuffling?",
-    "keywords": ["reshuffling", "rotation", "cross learning", "exposure", "growth"],
-    "answer": "Rotation helps in cross learning, and provides exposure to more variety of people and work. It is for your 360 growth at IndiaMART."
+    "category": "Attendance",
+    "question": "What are the different types of AR requests available?",
+    "keywords": ["AR types", "standard AR", "office tour AR", "WFH AR", "attendance regularization", "manager approval"],
+    "answer": "Three types: (1) Standard AR — for missed biometric punches or short working hours (min 7 hrs); (2) Office Tour AR — for business travel, requires manager approval; (3) WFH AR — for official work-from-home scenarios only, requires pre-approval from manager. WFH AR cannot be used for personal purposes."
   },
   {
     "id": "6",
-    "category": "Job Rotation",
-    "question": "How can an employee request a change in their role or project?",
-    "keywords": ["role change", "project change", "request", "manager", "HOD", "HR", "6 months"],
-    "answer": "To request a change in your role or project, initiate a discussion with your Managers/HOD/HR. Additionally, employees must have completed at least 6 months in the current role in the organization."
+    "category": "Attendance",
+    "question": "How does attendance work under Work from Home (WFH) mode?",
+    "keywords": ["WFH", "work from home", "mark present", "HRMS", "roster", "AR", "same day"],
+    "answer": "Employees must 'Mark Present' in HRMS on the same day as per their WFH roster — this does not require approval. If missed on the day itself, the employee must raise a 'Mark Present' AR for manager approval. No other AR types (Standard, Office Tour) are allowed on WFH roster days. If an employee visits office on a WFH day, only HRMS tab attendance is considered."
   },
   {
     "id": "7",
-    "category": "Project Concern",
-    "question": "How to approach a project and domains change?",
-    "keywords": ["project change", "domain change", "performance", "HOD", "HR"],
-    "answer": "Maintain strong performance consistently, and discuss opportunities for other projects with HOD and HR."
+    "category": "Attendance",
+    "question": "How is attendance managed in Hybrid mode, and how many ARs are available?",
+    "keywords": ["hybrid", "WFO", "WFH", "AR limit", "Marketplace", "BI", "Finance", "Legal", "HOD", "roster"],
+    "answer": "Hybrid employees follow WFO rules on office days and WFH rules on home days. On WFO days: Marketplace & BI employees get 2 'Other' ARs and 2 WFH ARs per month; Finance & Legal employees get 3 ARs. Office Tour ARs are separate and require HOD approval. Roster days are set by the HOD."
   },
   {
     "id": "8",
     "category": "Attendance",
-    "question": "What are the office timings for employees working under the Work from Office mode?",
-    "keywords": ["office timings", "WFO", "work from office", "9 hours", "9am", "6pm"],
-    "answer": "The office timings for WFO employees are from 9:00 AM to 6:00 PM, totaling 9 hours."
+    "question": "How can an employee request a change in their WFH or Hybrid roster?",
+    "keywords": ["roster change", "WFH roster", "hybrid roster", "HRHelpdesk", "HRBP", "manager approval", "HOD"],
+    "answer": "Send an email to HRHelpdesk@indiamart.com with the manager's or HRBP's approval attached. The HOD is the final approver for roster day changes for the team."
   },
   {
     "id": "9",
     "category": "Attendance",
-    "question": "How is attendance tracked for employees working under Work from Office?",
-    "keywords": ["attendance tracking", "WFO", "biometric", "finger scan", "sign in", "sign out"],
-    "answer": "Attendance for WFO employees is tracked based on Sign in and Sign out captured via Finger Scan on Bio-Metric devices installed at each floor."
+    "question": "What are the attendance rules for NSD Top Cities In-House FSF (Client Acquisition) L1 employees?",
+    "keywords": ["NSD", "FSF", "L1", "client acquisition", "meetings", "attendance rules", "AR", "punch-in"],
+    "answer": "Days 0–7: Attendance shared by trainers. Days 8–28: ≥1 meeting/day or punch-in before 9:46 AM. Days 29–90: ≥2 meetings/weekday + 12 meetings/week. Days 91+: ≥3 meetings/weekday + 18 meetings/week. AR: 1 AR/week and 4 AR/month if weekly meeting count is fulfilled and minimum 1 meeting is completed that day."
   },
   {
     "id": "10",
     "category": "Attendance",
-    "question": "Are there any provisions for flexible working hours available to all employees?",
-    "keywords": ["flexible hours", "flexible working", "8:30 AM", "7:30 PM", "present", "9 hours"],
-    "answer": "Yes, an employee can complete 9 working hours between 8:30 AM to 7:30 PM to be marked as present for the day. Note: Policy is made keeping everyone into account. If any changes are to be done we need to think for everyone and every aspect."
+    "question": "What is the HRMS auto-approval timeline for pending leave or AR requests?",
+    "keywords": ["HRMS", "auto-approval", "pending leave", "AR", "4 days", "loss of pay", "manager"],
+    "answer": "If a manager does not act on a leave or AR request, HRMS supports auto-approval after 4 days. Managers are expected to process requests promptly to prevent team members from incurring Loss of Pay."
   },
   {
     "id": "11",
     "category": "Attendance",
-    "question": "When is a half-day marked for employees?",
-    "keywords": ["half day", "4.5 hours", "7 hours", "attendance"],
-    "answer": "A half-day is marked if an employee works for 4.5 hours or more but less than 7 hours on a given day."
+    "question": "What should an employee do if they find their biometric attendance is missing?",
+    "keywords": ["biometric", "missing attendance", "AR", "HRMS", "business travel", "office tour AR"],
+    "answer": "The employee should apply for Attendance Regularization (AR) through the HRMS system on the same working day. If biometric was missed due to business travel, an Office Tour AR should be raised with manager approval."
   },
   {
     "id": "12",
-    "category": "Leaves",
-    "question": "How can an employee apply for Paternity leave?",
-    "keywords": ["paternity leave", "HOD", "approval", "HR SPOC", "Ramendra Chauhan"],
-    "answer": "The process involves initiating an email regarding paternity leave to the Head of Department (HoD) and getting an approval. Upon receiving approval, inform Ramendra Chauhan and loop HR SPOC to enable paternity leaves in the system."
+    "category": "Attendance",
+    "question": "What happens if an employee works less than 4.5 hours in a day?",
+    "keywords": ["less than 4.5 hours", "absent", "leave deduction", "loss of pay", "attendance"],
+    "answer": "The attendance does not qualify for either a half-day or full-day mark. The day may be treated as absent, leading to leave deduction or Loss of Pay depending on available balance."
   },
   {
     "id": "13",
-    "category": "Leaves",
-    "question": "How can an employee pull back his leaves if he decides to resume work on applied leaves?",
-    "keywords": ["pull back leave", "cancel leave", "resume work", "HR SPOC", "manager approval"],
-    "answer": "To pull back a leave request due to work commitments, employees should connect with their HR SPOC. They need to obtain approval from their manager via email, while keeping their HR informed throughout the process."
+    "category": "Leave Policy",
+    "question": "How many leaves are credited per month, and when?",
+    "keywords": ["leave credit", "1.75 leaves", "2.25 leaves", "head office", "sales", "branch office", "20 days"],
+    "answer": "Head Office (Noida Sector 135) and Dehradun employees receive 1.75 leaves per month. Sales and Branch Office employees receive 2.25 leaves per month. Leaves are credited on the 1st of each month. No leaves are credited if an employee has worked less than 20 days in that month."
   },
   {
     "id": "14",
-    "category": "Leaves",
-    "question": "Is it possible for employees to utilize their current leave balance for special purposes?",
-    "keywords": ["leave balance", "special purpose", "utilize leaves"],
-    "answer": "Employees have the flexibility to utilize their current leave balance for any purpose."
+    "category": "Leave Policy",
+    "question": "When are leaves credited for new joiners?",
+    "keywords": ["new joiner", "leave credit", "11th", "12th", "20 paid working days", "subsequent month"],
+    "answer": "New employees who join on or before the 11th/12th of the month (depending on 30 or 31-day months) and have 20 paid working days will have leaves credited in the subsequent month."
   },
   {
     "id": "15",
-    "category": "Leaves",
-    "question": "How many leaves is an employee entitled to avail?",
-    "keywords": ["leave entitlement", "21 leaves", "1.75 per month", "HQ employees", "leave policy"],
-    "answer": "Total 21 leaves, 1.75 per month is credited to HQ employees. For further details, employees can visit the Leave Policy."
+    "category": "Leave Policy",
+    "question": "What happens when an employee's leave balance goes negative?",
+    "keywords": ["negative leave", "leave balance", "LWP", "leave without pay", "5 leaves", "salary deduction"],
+    "answer": "The leave balance can go negative by up to 5 leaves in a calendar year, and the negative balance is adjusted against future credits. Once the negative balance exceeds 5 leaves, all further absences are treated as Leave Without Pay (LWP), which is deducted from the next salary."
   },
   {
     "id": "16",
-    "category": "AR (WFH/Other/Office Tour)",
-    "question": "How many ARs is an employee allowed to apply in a month?",
-    "keywords": ["AR limit", "attendance regularization", "WFH", "hybrid", "2 AR", "insource"],
-    "answer": "An employee working in Hybrid mode is allowed a maximum of 2 AR Other and 2 AR WFH in a month. No AR for insource employees. Note: AR Office Tour is only permissible and subject to HOD approval for business or official visit. No other reason would be justified for using this."
+    "category": "Leave Policy",
+    "question": "How are intervening holidays treated when leave balance is below -5?",
+    "keywords": ["negative balance", "holidays", "weekly off", "LWP", "leave without pay", "-5 leaves"],
+    "answer": "Once the balance reaches -5, even intervening holidays and weekly offs are counted as LWP. For example, if an employee is absent on Day 1 and Day 3 and Day 2 is a weekly off, all 3 days count as LWP."
   },
   {
     "id": "17",
-    "category": "AR (WFH/Other/Office Tour)",
-    "question": "What is Attendance Regularization (AR)?",
-    "keywords": ["attendance regularization", "AR", "missed punch", "biometric", "business travel"],
-    "answer": "Attendance Regularization (AR) allows employees to request attendance correction if they miss punching in/out to mark their attendance or if they are unable to do so due to business travel purposes."
+    "category": "Leave Policy",
+    "question": "What is Compensatory Off (Comp Off) and how is it earned and consumed?",
+    "keywords": ["comp off", "compensatory off", "non-working day", "biometric", "4.5 hours", "7 hours", "45 days"],
+    "answer": "Comp Off is generated when an employee works on a non-working day. For Noida 135 employees, biometric punch-in and punch-out is mandatory — minimum 4.5 hours logged earns half-day Comp Off, and 7 hours earns full-day Comp Off. Comp Off must be consumed within 45 days of the working day."
   },
   {
     "id": "18",
-    "category": "AR (WFH/Other/Office Tour)",
-    "question": "When can an employee apply for ARs?",
-    "keywords": ["AR apply", "30 days", "7 hours", "biometric attendance"],
-    "answer": "An employee can apply for ARs within 30 days if they have worked up to 7 hours in a day as captured via biometric attendance."
+    "category": "Leave Policy",
+    "question": "What is the maximum leave accrual balance and how does year-end encashment work?",
+    "keywords": ["leave accrual", "45 leaves cap", "year-end", "encashment", "carry forward", "basic salary", "lapse"],
+    "answer": "The maximum accrual cap is 45 leaves at any point. At year-end, out of all leaves allotted during the year, unused leaves beyond 15 lapse on a pro-rata basis. Of the remaining 15, up to 5 carry forward to the next year (to maintain the 45-day cap), and the rest are encashed and paid with January salary. Encashment is calculated on Basic Salary."
   },
   {
     "id": "19",
-    "category": "AR (WFH/Other/Office Tour)",
-    "question": "Is Work from Home AR applicable for personal use?",
-    "keywords": ["WFH AR", "work from home", "personal use", "official use", "manager approval"],
-    "answer": "No, Work from Home ARs are applicable for official use only, and they should be pre-approved by the manager. It can only be taken with manager's consent in exceptional cases."
+    "category": "Leave Policy",
+    "question": "Can you explain leave encashment with an example?",
+    "keywords": ["leave encashment", "example", "opening balance", "carry forward", "lapse", "January salary"],
+    "answer": "Example: Opening balance = 42, leaves credited = 27, leaves availed = 10. Unused credits = 27 - 10 = 17. From 17: 2 leaves lapse (17 - 15 = 2). Of the remaining 15: 3 carry forward (42 + 3 = 45, the cap), and 2 lapse + 10 encashed = 12 leaves encashed and paid in January."
   },
   {
     "id": "20",
-    "category": "Roster Update",
-    "question": "How can employees change the roster days?",
-    "keywords": ["roster change", "roster days", "HOD", "HR helpdesk", "email"],
-    "answer": "Roster days for the team are approved by the HOD. An employee can write an email to HRHelpdesk@indiamart.com with the manager/HRBP's approval on it."
+    "category": "Leave Policy",
+    "question": "What is the maternity leave entitlement for employees?",
+    "keywords": ["maternity leave", "26 weeks", "12 weeks", "80 days", "2 children", "3rd child", "adoptive mother"],
+    "answer": "Eligible employees (with minimum 80 days worked in the preceding 12 months) receive 26 weeks of maternity leave for up to 2 children, with no more than 8 weeks before the delivery date. For the third child, the entitlement is 12 weeks with no more than 6 weeks before delivery. Adoptive mothers and commissioning mothers are entitled to 12 weeks from the date the child is handed over."
   },
   {
     "id": "21",
-    "category": "Balanced Scorecard (BSC)",
-    "question": "Is the Balanced Scorecard (BSC) exclusively required for employees eligible for Performance Linked Incentives (PLI)?",
-    "keywords": ["BSC", "balanced scorecard", "PLI", "performance", "all employees"],
-    "answer": "BSC is applicable to all employees, not just those eligible for PLI. It is a standard tool to track employee performance. Therefore, it is important to maintain the BSC whether an employee is eligible for PLI or not."
+    "category": "Leave Policy",
+    "question": "What is the paternity leave entitlement and eligibility?",
+    "keywords": ["paternity leave", "3 days", "consecutive", "5 days before", "30 days after", "2 times"],
+    "answer": "Employees are eligible for 3 consecutive working days of paternity leave. This can be availed from 5 days before the expected date of birth to 30 days after the birth. Paternity leave can be availed a maximum of 2 times during an employee's career at IndiaMART."
   },
   {
     "id": "22",
-    "category": "Balanced Scorecard (BSC)",
-    "question": "What are the possible reasons for failures in uploading a Balanced Scorecard (BSC)?",
-    "keywords": ["BSC upload", "upload failure", "file name", "XLS", "PDF", "HRBP"],
-    "answer": "If an employee is experiencing difficulty uploading the BSC, it may be due to factors such as a long file name or using a format other than XLS or PDF. It is recommended to connect with your HRBP for further assistance and clarification."
+    "category": "Leave Policy",
+    "question": "How does an employee apply for paternity leave?",
+    "keywords": ["paternity leave", "HOD", "approval", "Ramendra Chauhan", "HR SPOC", "HRMS"],
+    "answer": "Initiate an email to the HOD and obtain written approval. Upon approval, inform Ramendra Chauhan and loop in the HR SPOC to enable paternity leave in the HRMS system."
   },
   {
     "id": "23",
-    "category": "Balanced Scorecard (BSC)",
-    "question": "If an employee joins in the middle of a quarter, is it necessary for them to upload their Balanced Scorecard (BSC)?",
-    "keywords": ["BSC", "new joiner", "mid-quarter", "two months", "upload"],
-    "answer": "If an employee joins within the first two months of the quarter, they are required to upload their Balanced Scorecard (BSC)."
+    "category": "Leave Policy",
+    "question": "Who can apply leave on behalf of an employee if they are unable to do so?",
+    "keywords": ["leave on behalf", "manager", "HRBP", "HRMS", "return to duty"],
+    "answer": "If the employee cannot apply leave in HRMS, the manager must ensure leave is applied on the day of the employee's return to duty, or the concerned HRBP can apply leave on the employee's behalf."
   },
   {
     "id": "24",
-    "category": "PLI Related",
-    "question": "If an employee joins in the last month of the quarter, are they eligible to receive the Performance Linked Incentive (PLI) for that month?",
-    "keywords": ["PLI", "new joiner", "last month", "prorated", "18th", "quarter"],
-    "answer": "If an employee joins between the 1st and 18th of the month and has a compensation package of 12 Lacs or above, they will receive the PLI on a prorated basis for that month. If they join after the 18th of the month, they will receive the prorated PLI along with the next quarter's PLI."
+    "category": "Leave Policy",
+    "question": "Can an employee retract a leave that has already been applied and approved?",
+    "keywords": ["retract leave", "cancel leave", "HR SPOC", "manager approval", "reverse leave"],
+    "answer": "Yes. The employee should connect with the HR SPOC, get manager approval via email (keeping HR in the loop), and the leave will be reversed in the system."
   },
   {
     "id": "25",
-    "category": "PLI Related",
-    "question": "How can an employee determine his eligibility for the Performance Linked Incentive?",
-    "keywords": ["PLI eligibility", "12 lacs", "CTC", "offer letter", "appraisal letter"],
-    "answer": "The PLI component is applicable to employees with an annual CTC of 12 lacs or more. When an employee is eligible for the Performance Linked Incentive, it is mentioned in the offer letter/appraisal letter."
+    "category": "Leave Policy",
+    "question": "How many public/national holidays are provided, and what is the leave calendar period?",
+    "keywords": ["public holidays", "national holidays", "10 holidays", "calendar year", "January", "December"],
+    "answer": "10 holidays are provided per calendar year. The leave calendar year runs from 1st January to 31st December."
   },
   {
     "id": "26",
-    "category": "Rewards/Recognition",
-    "question": "How does the rewards and recognition system operate and what are the different types of awards available?",
-    "keywords": ["rewards", "recognition", "RNR", "employee of the month", "best performer", "emerging star", "BSC", "nomination"],
-    "answer": "Employees who consistently achieve their BSC goals with high-quality deliverables and demonstrate additional initiatives are more likely to be rewarded. The manager nominates the employee and sends nominations to respective HODs and CXO for final approval. Awards: Employee of the Month (INR 5000), Best Performer of the Month (INR 2500), Emerging Star of the Month for employees joined within 0-180 days (INR 2500), Continuous Excellence (INR 2500), Pillar of Success (No cash reward)."
+    "category": "Mediclaim & Insurance",
+    "question": "Who is covered under the Group Mediclaim Policy and when does coverage begin?",
+    "keywords": ["mediclaim", "group policy", "coverage", "date of joining", "50000 salary", "30 days"],
+    "answer": "All IndiaMART InterMESH Ltd. employees are covered. For employees with monthly salary of Rs. 50,000 or above, coverage begins from the Date of Joining (DOJ). For others, eligibility begins after 30 days from DOJ."
   },
   {
     "id": "27",
-    "category": "Rewards/Recognition",
-    "question": "Why is the RNR amount taxable?",
-    "keywords": ["RNR", "taxable", "monetary benefit", "tax bracket"],
-    "answer": "As this pertains to a monetary benefit, no exemptions apply. If the amount falls within the taxable bracket, it will be subject to tax; otherwise, it will not be charged."
+    "category": "Mediclaim & Insurance",
+    "question": "What is the sum insured and which family members are covered?",
+    "keywords": ["sum insured", "2 lakh", "family floater", "parents", "spouse", "children", "mediclaim"],
+    "answer": "The sum insured is Rs. 2 Lakh per family per year on a family floater basis. Covered members: Self + Parents + Spouse + up to 2 Children. Married employees can only add their own parents — parents of the spouse are not eligible."
   },
   {
     "id": "28",
-    "category": "Mediclaim Related",
-    "question": "Who is the SPOC for Mediclaim related queries and what are the steps for raising them?",
-    "keywords": ["mediclaim", "SPOC", "Neeraj Kumar Varshney", "IIL ticket", "MyWebERP", "insurance"],
-    "answer": "The designated SPOC for Mediclaim is Neeraj Kumar Varshney. Employees can raise a ticket under the Mediclaim section via MyWebERP >> MY IIL TICKETS >> New Issue >> Mediclaim. Alternatively, they can refer to the email titled 'Group Mediclaim Insurance (2023-24)'."
+    "category": "Mediclaim & Insurance",
+    "question": "Are pre-existing diseases covered from day one?",
+    "keywords": ["pre-existing disease", "day one coverage", "waiting period", "waived", "group policy"],
+    "answer": "Yes. Pre-existing diseases are covered from Day 1. The 30-day waiting period and first-year/second-year exclusions that typically apply in standard policies are all waived off under the IndiaMART group policy."
   },
   {
     "id": "29",
-    "category": "Payroll Concern",
-    "question": "How can employees address and resolve salary or payroll-related concerns?",
-    "keywords": ["payroll", "salary concern", "IIL ticket", "WebERP", "payroll issue"],
-    "answer": "Employees can address their payroll-related concerns by raising an IIL ticket through WebERP. They can navigate to My ERP > IIL Ticket > New Issues > Payroll, fill in the necessary details, and then submit the ticket."
+    "category": "Mediclaim & Insurance",
+    "question": "How can a newborn baby or newly married spouse be added to the policy?",
+    "keywords": ["newborn", "new spouse", "add to policy", "30 days", "date of birth", "date of marriage", "renewal"],
+    "answer": "Natural additions — a newborn baby or newly married spouse — can be added to the policy within 30 days of the date of birth or date of marriage respectively. After 30 days, additions may not be possible until the next renewal."
   },
   {
     "id": "30",
-    "category": "IT Related",
-    "question": "How can employees reset their Gmail password?",
-    "keywords": ["Gmail", "password reset", "HR helpdesk", "employee ID", "IT"],
-    "answer": "To initiate a Gmail password reset, individuals can contact HRHelpDesk@indiamart.com and provide their employee ID. The HR team will then share the new password."
+    "category": "Mediclaim & Insurance",
+    "question": "What is the minimum hospitalization requirement to file a claim?",
+    "keywords": ["hospitalization", "24 hours", "claim", "day care", "cataract", "mediclaim"],
+    "answer": "A minimum of 24 hours of continuous hospitalization is required to be eligible for a claim. An exception applies for day-care treatments (e.g., cataract surgery) that do not require 24-hour admission."
   },
   {
     "id": "31",
-    "category": "IT Related",
-    "question": "Who is eligible for the Laptop allocation?",
-    "keywords": ["laptop", "allocation", "payroll", "eligibility"],
-    "answer": "Employees on IndiaMART's payroll are eligible for Laptop Allocation."
+    "category": "Mediclaim & Insurance",
+    "question": "Is the policy cashless, and what are pre/post hospitalization coverage periods?",
+    "keywords": ["cashless", "network hospital", "reimbursement", "pre-hospitalization", "post-hospitalization", "30 days", "60 days"],
+    "answer": "Yes, the policy is cashless at listed/network hospitals of the insurance vendor. For non-network hospitals, a reimbursement process applies. Pre-hospitalization expenses are covered for 30 days before admission, and post-hospitalization expenses are covered for up to 60 days after discharge."
   },
   {
     "id": "32",
-    "category": "Parking Concern",
-    "question": "Whom to reach out for a parking facility?",
-    "keywords": ["parking", "car", "RC copy", "Rajesh", "facility", "infra"],
-    "answer": "For Parking, share your car details along with RC Copy to Rajeshn@indiamart.com or open a ticket against Parking Facility > Service/Infra & Admin (Rajesh Kumar Choudhary)."
+    "category": "Mediclaim & Insurance",
+    "question": "What should an employee do if admitted to a non-listed hospital?",
+    "keywords": ["non-network hospital", "non-listed hospital", "HR SPOC", "24 hours", "bills", "30 days", "reimbursement"],
+    "answer": "Send formal written communication to the HR SPOC and Process Owner within 24 hours of admission. All bills must be submitted within 30 days of the post-hospitalization treatment/discharge date, attested by hospital authorities."
   },
   {
     "id": "33",
-    "category": "Reimbursement",
-    "question": "How can an employee apply for expense reimbursement?",
-    "keywords": ["reimbursement", "expense", "HOD approval", "reimbursement form", "payable helpdesk"],
-    "answer": "Employees can download the reimbursement form from the Docs & Proposal section (Support >> Admin >> Expense Reimbursement Form), obtain approval from their HOD, and then submit it to the payable helpdesk. For further assistance, employees can refer to payablehelpdesk@indiamart.com."
+    "category": "Mediclaim & Insurance",
+    "question": "What are the co-payment, room rent, and ambulance charge limits?",
+    "keywords": ["co-payment", "10%", "room rent", "6000", "ICU", "10000", "ambulance", "1000", "newborn"],
+    "answer": "Co-payment: 10% of every claim is borne by the employee. Room rent: Capped at Rs. 6,000/day for a normal room and Rs. 10,000/day for ICU. Ambulance charges: Up to Rs. 1,000 per case. Newborn baby is covered from Day 1 within the family sum insured."
   },
   {
     "id": "34",
-    "category": "Hiring",
-    "question": "Made a referral but there is no revert from HR team.",
-    "keywords": ["referral", "HR", "no response", "Klimb", "refer@indiamart.com", "tracking"],
-    "answer": "For timely updates, it is suggested to share referrals at refer@indiamart.com or use Klimb to share directly to job posts. Other means are not feasible for better and timely tracking."
+    "category": "Mediclaim & Insurance",
+    "question": "What are the disease-wise claim capping limits under the policy?",
+    "keywords": ["disease cap", "cataract", "angiography", "knee replacement", "hip replacement", "gallbladder", "hernia", "kidney stone", "claim limit"],
+    "answer": "Key caps: Angiography Rs. 50,000 | Cataract (per eye, inclusive of lens) Rs. 40,000 | Gallbladder Rs. 75,000 | Appendectomy Rs. 50,000 | Uterus Removal Rs. 1,00,000 | Hernia (any type, incl. mesh) Rs. 50,000 | Total Knee Replacement (per knee, incl. implant) Rs. 2,00,000 | Kidney Stone Rs. 75,000 | Piles Rs. 50,000 | Tonsillectomy Rs. 75,000 | Total Hip Replacement (per hip, incl. implant) Rs. 2,00,000 | Tympanoplasty Rs. 75,000 | Nasal Polyps/Sinusitis Rs. 75,000."
   },
   {
     "id": "35",
-    "category": "Training Related",
-    "question": "Tech Learning Sessions are more focused towards backend related topics. What can be done?",
-    "keywords": ["tech learning", "training", "backend", "L&D", "HOD", "learning sessions"],
-    "answer": "You can approach the L&D Team directly or their HODs."
+    "category": "Mediclaim & Insurance",
+    "question": "Is Maternity covered under the Mediclaim policy?",
+    "keywords": ["maternity", "mediclaim", "not applicable", "NA", "earned leave", "LOP"],
+    "answer": "No. Maternity cover is listed as Not Applicable (NA) under the current Group Mediclaim policy. Employees on maternity leave must use their Earned Leave (EL), Casual Leave (CL), or mark the absence as Loss of Pay (LOP)."
+  },
+  {
+    "id": "36",
+    "category": "Mediclaim & Insurance",
+    "question": "Who is the SPOC for Mediclaim queries and how are tickets raised?",
+    "keywords": ["mediclaim SPOC", "Neeraj Kumar Varshney", "IIL ticket", "MyWebERP", "Finance", "Payroll"],
+    "answer": "The designated SPOC is Neeraj Kumar Varshney. Employees can raise a Mediclaim ticket via: MyWebERP >> MY IIL TICKETS >> New Issue >> Mediclaim. The policy is owned by the Finance and Payroll team, approved by the VP Finance."
+  },
+  {
+    "id": "37",
+    "category": "Payroll, PLI & BSC",
+    "question": "What is Performance Linked Incentive (PLI) and who is eligible?",
+    "keywords": ["PLI", "performance linked incentive", "variable pay", "quarterly", "12 lakh", "CTC", "permanent employees"],
+    "answer": "PLI is the variable pay component disbursed quarterly, designed to link employee performance to organizational business objectives. It is applicable to all permanent employees with an annual CTC of Rs. 12,00,000 and above. Employees with CTC below Rs. 12 Lakh are not eligible. Note: CTC for PLI eligibility excludes Gratuity, Insurance Premium cost, Conveyance Payout, and City Compensatory Allowance."
+  },
+  {
+    "id": "38",
+    "category": "Payroll, PLI & BSC",
+    "question": "What is the PLI percentage for different CTC slabs?",
+    "keywords": ["PLI percentage", "CTC slab", "10%", "15%", "20%", "individual component", "company component", "BSC", "50:50"],
+    "answer": "12 Lac to <24 Lac: 10% PLI | 24 Lac to <48 Lac: 15% PLI | 48 Lac and above: 20% PLI. All slabs are disbursed quarterly. PLI is split equally (50:50) between Individual Component (based on BSC score) and Company Component (based on quarterly target achievement)."
+  },
+  {
+    "id": "39",
+    "category": "Payroll, PLI & BSC",
+    "question": "What is the Balanced Score Card (BSC) and who must prepare it?",
+    "keywords": ["BSC", "balanced scorecard", "performance evaluation", "10th", "30 days", "new joiner", "WebERP", "15th"],
+    "answer": "BSC is the performance evaluation tool used to assess the Individual PLI Component. It is applicable to ALL employees — not just PLI-eligible ones. BSC must be prepared by the 10th of the first month of each quarter. For new joiners, BSC must be prepared within 30 days of joining. Managers must approve BSC scores in WebERP by the 15th of the month following quarter closure."
+  },
+  {
+    "id": "40",
+    "category": "Payroll, PLI & BSC",
+    "question": "What are the PLI payout timelines and what is the Company Component based on?",
+    "keywords": ["PLI payout", "quarterly", "July", "January", "company component", "target achievement", "investor calls"],
+    "answer": "PLI is disbursed with the salary of the month following the quarter's close. E.g., Apr–Jun quarter PLI is paid in July; Oct–Dec quarter PLI is paid in January. The Company Component is based on the organization's quarterly target achievement; targets are shared at the beginning of each quarter and clarified after investor calls."
+  },
+  {
+    "id": "41",
+    "category": "Payroll, PLI & BSC",
+    "question": "Is a mid-quarter joiner eligible for PLI, and how is it calculated?",
+    "keywords": ["mid-quarter joiner", "PLI eligibility", "prorated", "1st to 18th", "after 18th", "last working day"],
+    "answer": "Yes. If an employee joins between the 1st and 18th of the last month of the quarter and their CTC is Rs. 12 Lac or above, they receive PLI on a prorated basis for that month. If they join after the 18th, the prorated PLI is included in the next quarter's disbursement. Employees must be active on the last working day of the quarter to be eligible for that quarter's payout."
+  },
+  {
+    "id": "42",
+    "category": "Payroll, PLI & BSC",
+    "question": "Are there any exceptions or deviations permitted under the PLI policy?",
+    "keywords": ["PLI exception", "deviation", "CXO", "no deviation", "policy"],
+    "answer": "No deviations or exceptions are permitted as a standard rule. In rare circumstances, only CXOs have the right to allow deviations or exceptions to the PLI policy."
+  },
+  {
+    "id": "43",
+    "category": "Payroll, PLI & BSC",
+    "question": "What are possible reasons for BSC upload failures and how to resolve them?",
+    "keywords": ["BSC upload", "upload failure", "file name", "XLS", "PDF", "HRBP", "format"],
+    "answer": "Common reasons: (1) File name is too long — shorten it; (2) File format is not XLS or PDF — convert to an accepted format. If the issue persists, connect with your HRBP for further assistance."
+  },
+  {
+    "id": "44",
+    "category": "Payroll, PLI & BSC",
+    "question": "How can employees resolve payroll or salary concerns?",
+    "keywords": ["payroll concern", "salary issue", "IIL ticket", "WebERP", "HR SPOC"],
+    "answer": "Raise an IIL ticket through WebERP: My ERP > IIL Ticket > New Issues > Payroll, fill in the necessary details, and submit. Alternatively, contact your HR SPOC directly."
+  },
+  {
+    "id": "45",
+    "category": "Payroll, PLI & BSC",
+    "question": "Are Rewards & Recognition cash amounts taxable?",
+    "keywords": ["RNR", "rewards", "recognition", "taxable", "cash reward", "employee of the month"],
+    "answer": "Yes. Monetary reward amounts (such as Employee of the Month cash rewards) are taxable as per applicable tax rules. No exemptions apply to these amounts."
+  },
+  {
+    "id": "46",
+    "category": "Internal Job Posting (IJP)",
+    "question": "What is the objective of the IJP policy and who can apply?",
+    "keywords": ["IJP", "internal job posting", "eligibility", "9 months", "payroll", "open positions"],
+    "answer": "The IJP policy ensures all open positions are visible to employees and provides equal opportunity to apply. It promotes growth from within. All employees on the payroll of IndiaMART InterMESH Ltd. who have completed a minimum of 9 months in their current functional area and position are eligible to apply."
+  },
+  {
+    "id": "47",
+    "category": "Internal Job Posting (IJP)",
+    "question": "What are the academic eligibility criteria for different IJP movements?",
+    "keywords": ["IJP academic", "60%", "70%", "80%", "class X", "class XII", "graduation", "L1 to L2", "L2 to L3", "Marketplace"],
+    "answer": "L1 to L2 (NSD, CSD, Tele-CSD, other verticals): Minimum 60% in any two of Class X, XII, or Graduation. L1 to L2 (Marketplace vertical): Minimum 80% in any two of Class X, XII, or Graduation. L2 to L3 lateral movement (any vertical): Minimum 70% in any two of Class X, XII, or Graduation. Exceptions can be considered on a case-to-case basis with Internal Board (IB) approval."
+  },
+  {
+    "id": "48",
+    "category": "Internal Job Posting (IJP)",
+    "question": "What performance conditions must be met for IJP eligibility?",
+    "keywords": ["IJP performance", "A- rating", "appraisal", "intra-vertical", "inter-vertical", "review scores"],
+    "answer": "The employee's performance rating and last two performance review scores are assessed. Cases where an appraisal is on hold are not processed. Any rating below A- is not processed further. Both intra-vertical and inter-vertical IJP applications are covered under this policy."
+  },
+  {
+    "id": "49",
+    "category": "Internal Job Posting (IJP)",
+    "question": "How are IJP vacancies advertised and how are applicants acknowledged?",
+    "keywords": ["IJP vacancy", "intranet", "talent pool", "4 working days", "shortlisting", "Talent Acquisition"],
+    "answer": "The Talent Acquisition team advertises all L1–L3 vacancies on the company intranet, notice boards, or other appropriate channels. A Talent Pool of employees with 9+ months in the same role is maintained on the intranet. All applicants are acknowledged within 4 working days of applying, with shortlisting status and reasons communicated, and a copy sent to the applicant's manager."
+  },
+  {
+    "id": "50",
+    "category": "Internal Job Posting (IJP)",
+    "question": "What does the IJP selection process look like?",
+    "keywords": ["IJP selection", "knowledge test", "panel interview", "3 members", "HR Ops", "hiring manager", "neutral manager"],
+    "answer": "Shortlisted employees undergo a knowledge test and a panel interview. The panel must have at least 3 members: one from Talent Acquisition/HR Ops, the Hiring Manager, and one Neutral Manager. Assessment criteria include job requirements, current performance, growth potential, and overall suitability."
+  },
+  {
+    "id": "51",
+    "category": "Internal Job Posting (IJP)",
+    "question": "How is compensation handled after IJP selection, and when does the transition happen?",
+    "keywords": ["IJP compensation", "salary change", "45 days", "transition", "new role", "appraisal cycle"],
+    "answer": "Compensation changes to the starting salary bracket of the new role. If the employee's existing compensation is already higher than the new role's starting salary, it stays unchanged until the next appraisal cycle. The employee must join the new team within 45 days of selection intimation, on a date mutually agreed by the Talent Acquisition team, Hiring Manager, and Relieving Manager."
+  },
+  {
+    "id": "52",
+    "category": "Employee Referral Program",
+    "question": "Who can participate in the Employee Referral Program and what is the objective?",
+    "keywords": ["referral program", "eligibility", "interns", "in-source", "60 days", "full-time", "talent"],
+    "answer": "All IndiaMART employees, interns, and in-source employees can refer candidates for IndiaMART or in-source vacancies. The objective is to reward employees for identifying and attracting suitable talent. Interns are eligible for payout only if both the intern and the referred person convert to full-time employees and both complete the 60-day criteria."
+  },
+  {
+    "id": "53",
+    "category": "Employee Referral Program",
+    "question": "How should referrals be submitted?",
+    "keywords": ["referral submission", "Klimb", "Google Sheets", "ATS", "resume", "employee code", "confirmation email"],
+    "answer": "Referrals can be submitted via the ATS platform Klimb (https://hire.klimb.io) or Google Sheets. Log in with your official email ID, go to the Jobs icon > Refer tab > click the Refer Icon next to the relevant job > upload the resume > review parsed info > Confirm. A confirmation email with a tracking link is sent to your official ID. It is mandatory to mention the referee's name and employee code on the application form."
+  },
+  {
+    "id": "54",
+    "category": "Employee Referral Program",
+    "question": "What are the eligibility conditions for referral payout?",
+    "keywords": ["referral payout", "60 days", "active employee", "direct report", "ex-employee", "selection process"],
+    "answer": "Both the referee (the person who referred) and the referral (the referred candidate) must have completed 60 days and be active in the organization at the time of payout (approximately the 60th–90th day). The referral cannot directly report to the referee from days 21 to 60. The referral must not be an ex-employee or a rehired case. The referee must not participate in the selection process."
+  },
+  {
+    "id": "55",
+    "category": "Employee Referral Program",
+    "question": "Who is NOT eligible for referral payout?",
+    "keywords": ["referral ineligible", "vertical head", "HR team", "HOD", "L4", "VP", "AVP", "Zonal Manager", "recruiter"],
+    "answer": "Vertical Heads, HR team members (including all recruiters), HODs for the concerned position, and Grade L4 and above leaders are ineligible. Excluded designations include: Zonal Manager, AVP, VP, SVP, Regional Director, CFO, CIO, Principal Legal Counsel, Senior Product Manager, Cluster Head, and equivalents."
+  },
+  {
+    "id": "56",
+    "category": "Employee Referral Program",
+    "question": "What are the referral payout amounts for different designation levels?",
+    "keywords": ["referral payout amount", "7500", "10000", "15000", "Associate", "Relationship Manager", "Team Lead", "Sr. Manager"],
+    "answer": "Rs. 7,500: Associate/Executive/Sr. Executive, Account Manager, Asst Manager, Manager, Data Analyst, Engineers, etc. Rs. 10,000: Relationship Manager, Senior Account Manager, Team Lead, BSM/BM, Area Manager, Legal Counsel, Lead Engineer, Web Designer, etc. Rs. 15,000: Sr. Manager/Regional Manager, Center Manager, Cluster Head, Asst VP, VP/Regional Director, Sr. VP, Sr. Architect, etc."
+  },
+  {
+    "id": "57",
+    "category": "Employee Referral Program",
+    "question": "How is referral payout timing determined?",
+    "keywords": ["referral payout timing", "14th", "60 days", "salary cycle", "DOJ", "joining date"],
+    "answer": "Employees who join on or before the 14th of any month and complete 60 days receive payout in the last week of that month's salary cycle. Employees who join after the 14th receive payout in the last week of the following month. Example: DOJ 5th April → 60 days completed 3rd June → Payout in June final payout cycle."
+  },
+  {
+    "id": "58",
+    "category": "Employee Referral Program",
+    "question": "How long is a referral valid and what if the same resume comes from multiple sources?",
+    "keywords": ["referral validity", "60 days", "multiple sources", "first come first serve", "WebERP", "duplicate referral"],
+    "answer": "A referral is valid for 60 days from the submission date. Any referral not shared before the candidate's lineup is not entertained. If a resume is received from multiple sources, attribution is determined by 'First Come, First Serve' or the actual 'Candidate Selection source,' whichever is applicable, verified through WebERP or by the Recruitment team."
+  },
+  {
+    "id": "59",
+    "category": "Employee Referral Program",
+    "question": "How can an employee track the status of their referrals?",
+    "keywords": ["referral tracking", "Klimb", "referral dashboard", "chatbot", "refer@indiamart.com", "stage", "DOJ"],
+    "answer": "On Klimb: click the My Profile icon (top right) > My Referrals > view the Referral Dashboard (stage, apply date, DOJ, job owner). Alternatively, visit the official Careers@IM site chatbot and choose Option 1 (Referral Status) and enter the referred candidate's email. For untracked referrals, share via refer@indiamart.com or directly through Klimb job posts."
+  },
+  {
+    "id": "60",
+    "category": "Code of Conduct & Ethics",
+    "question": "What are the three categories of offences and their consequences?",
+    "keywords": ["offence category", "Category A", "Category B", "Category C", "termination", "PIP", "warning", "bribery", "sexual harassment"],
+    "answer": "Category A (Most Serious): Leads to enquiry and termination on the first instance — e.g., bribery, fraud, sexual harassment, document forgery, false attendance marking, forcing a colleague to resign, accepting gifts from vendors, being convicted by a court of law. Category B (Moderate): First instance leads to a Performance Improvement Plan (PIP); repeat leads to separation — e.g., poor performance against KRAs, interference with company work. Category C (Minor): First instance results in a written warning; repeat leads to separation — e.g., late-coming, social media violations, false sick leave, discussing salary with others."
+  },
+  {
+    "id": "61",
+    "category": "Code of Conduct & Ethics",
+    "question": "What constitutes fraudulence or misrepresentation under the Code of Conduct?",
+    "keywords": ["fraud", "misrepresentation", "bribery", "forgery", "false attendance", "confidential information", "NDNC", "Category A", "Category C"],
+    "answer": "Category A (termination): Demanding/taking/giving bribes; forging company documents or co-employee signatures; giving false information at employment; committing theft or dishonesty; marking or approving false attendance; calling NDNC numbers. Category C (warning then separation): Working on outside projects for personal gain; reporting someone else's sales in your own name (with incentive docked for 4 weeks on first instance); using false sick leave documents; sharing confidential information without authorization."
+  },
+  {
+    "id": "62",
+    "category": "Code of Conduct & Ethics",
+    "question": "What are the rules around gifts, entertainment, and hospitality?",
+    "keywords": ["gifts", "entertainment", "hospitality", "vendor", "Category A", "termination", "sponsored travel"],
+    "answer": "Accepting gifts (including entertainment and sponsored travel) from current or prospective customers or suppliers is a Category A offence and leads to enquiry and termination. Nominal gift exchanges with stakeholders where the reason, nature, type, value, and timing are clearly appropriate may be allowed. Making payments in the form of gifts to obtain or retain business is also Category A."
+  },
+  {
+    "id": "63",
+    "category": "Code of Conduct & Ethics",
+    "question": "What are the social media and salary discussion policies?",
+    "keywords": ["social media", "salary discussion", "Category C", "negative comments", "compensation", "HRBP", "termination"],
+    "answer": "Posting negative comments about IndiaMART on any social media platform is a Category C offence — warning on first instance, separation on repeat. Discussing your own or colleagues' compensation with anyone other than your Manager trail or HRBP is also Category C on first instance (warning), but escalates to enquiry leading to termination on the second instance."
+  },
+  {
+    "id": "64",
+    "category": "Code of Conduct & Ethics",
+    "question": "What constitutes misuse of company property and what are the consequences?",
+    "keywords": ["company property", "misuse", "Category C", "unauthorized documents", "cab deviation", "office property", "alcohol", "sleeping on job"],
+    "answer": "Category C offence (warning → separation): Carrying company documents/data outside without authorization; carrying unauthorized persons in company vehicles; causing frequent cab route deviation; damaging office property; misbehaving on client premises; violating cleanliness/housekeeping rules. Sleeping on the job, neglecting assigned duties, or being under the influence of alcohol/drugs on company premises are also Category C offences."
+  },
+  {
+    "id": "65",
+    "category": "Code of Conduct & Ethics",
+    "question": "What happens if an employee is absent for 3 consecutive days without information?",
+    "keywords": ["absent", "3 consecutive days", "no information", "Category C", "abandonment", "termination"],
+    "answer": "This is a Category C offence — warning on first instance, separation on repeat. If an employee absents for an extended period without information, it may also trigger termination procedures under abandonment of duty."
+  },
+  {
+    "id": "66",
+    "category": "Code of Conduct & Ethics",
+    "question": "Who is covered by the Code of Conduct?",
+    "keywords": ["code of conduct", "all employees", "partner payroll", "all locations", "integrity", "compliance"],
+    "answer": "The Code of Conduct applies to all employees of IndiaMART InterMESH Ltd. across all locations, including employees working with IndiaMART on partner payroll. It sets expectations of complete fairness, integrity, professional conduct, and compliance with applicable laws, regulations, and internal policies."
+  },
+  {
+    "id": "67",
+    "category": "Anti-Bribery Policy",
+    "question": "What is the scope and applicability of the Anti-Bribery Policy?",
+    "keywords": ["anti-bribery", "scope", "employees", "agents", "contractors", "consultants", "business dealings"],
+    "answer": "The policy applies to all employees, officers, directors, agents, consultants, contractors, and other representatives acting on behalf of IndiaMART (collectively 'Company Representatives'). It covers all business dealings, third-party engagements, and transactions in any form."
+  },
+  {
+    "id": "68",
+    "category": "Anti-Bribery Policy",
+    "question": "How are bribery, corruption, facilitation payments, and kickbacks defined?",
+    "keywords": ["bribery definition", "corruption", "facilitation payment", "grease payment", "kickback", "gifts", "hospitality"],
+    "answer": "Bribery: Offering, promising, giving, accepting, or soliciting something of value to influence an act dishonestly or gain improper business advantage — includes cash, gifts, lavish hospitality, and indirect payments. Corruption: Misuse of office/power for private gain, directly or indirectly. Facilitation Payments ('grease payments'): Unofficial small payments to expedite routine government actions (permits, licenses, customs, visas) — strictly prohibited. Kickbacks: Payments made in return for a business favour — strictly prohibited in any form."
+  },
+  {
+    "id": "69",
+    "category": "Anti-Bribery Policy",
+    "question": "What are the specific prohibited conducts under this policy?",
+    "keywords": ["prohibited conduct", "anti-bribery", "kickbacks", "false records", "off-the-record", "facilitation payments"],
+    "answer": "Company Representatives must not: offer, give, receive, or solicit anything of value to influence business or government decisions; make facilitation or grease payments of any amount; accept or provide kickbacks; make improper payments through intermediaries; falsify books and records to conceal improper payments; or engage in any 'off-the-record' transactions."
+  },
+  {
+    "id": "70",
+    "category": "Anti-Bribery Policy",
+    "question": "How should suspected bribery violations be reported?",
+    "keywords": ["bribery reporting", "CEO", "Business Head", "Vigil Mechanism", "Whistle Blower", "complaint"],
+    "answer": "Report immediately to the Chief Executive Officer, or to the concerned Business Head/Regional Business Head/Functional Head, or through the 'Complaint Reporting' mechanism under the Vigil Mechanism Whistle Blower Policy at https://investor.indiamart.com/CorporateGovernance.aspx."
+  },
+  {
+    "id": "71",
+    "category": "Anti-Bribery Policy",
+    "question": "What are the training, record-keeping, and sign-off requirements?",
+    "keywords": ["anti-bribery training", "annual sign-off", "record keeping", "due diligence", "awareness", "third party"],
+    "answer": "All employees must give an annual sign-off on the Anti-Bribery Policy confirming they have read and will comply with it. Accurate and transparent records of all transactions must be maintained. The Company conducts awareness training and educational mailers periodically. Before engaging third parties, appropriate due diligence on bribery and corruption risk must be conducted."
+  },
+  {
+    "id": "72",
+    "category": "Anti-Bribery Policy",
+    "question": "What are the consequences of violating the Anti-Bribery Policy?",
+    "keywords": ["anti-bribery violation", "termination", "civil penalty", "criminal penalty", "law enforcement"],
+    "answer": "Violations may result in disciplinary action up to and including termination of employment, and may also lead to civil or criminal penalties. The Company will fully cooperate with law enforcement authorities in any investigation or prosecution."
+  },
+  {
+    "id": "73",
+    "category": "Corrective Action Plan (CAP)",
+    "question": "What is a Corrective Action Plan (CAP) and how is it different from a warning letter?",
+    "keywords": ["CAP", "corrective action plan", "warning letter", "transformation", "improvement", "performance"],
+    "answer": "A CAP is NOT a warning letter. It is an opportunity given to employees who need improvement in performance or behavior. Its primary intent is to bring about 'Transformation' in the employee — the goal is improvement and development, not punishment."
+  },
+  {
+    "id": "74",
+    "category": "Corrective Action Plan (CAP)",
+    "question": "In what situations can a CAP be issued?",
+    "keywords": ["CAP issuance", "performance", "behaviour", "KRA", "unauthorized absence", "late-coming", "code of conduct"],
+    "answer": "A CAP can be issued for: (1) Performance — when an employee is unable to meet expectations as per defined KRAs; (2) Behaviour — for a first-time violation of the Code of Conduct, first-time unauthorized absence, or habitual late-coming; (3) Both performance and behaviour concerns together. It does not protect an employee from integrity-related issues, which are handled separately."
+  },
+  {
+    "id": "75",
+    "category": "Corrective Action Plan (CAP)",
+    "question": "What does the CAP implementation process look like step by step?",
+    "keywords": ["CAP process", "4 weeks", "CAP form", "review panel", "reporting manager", "weekly review", "HR representative"],
+    "answer": "Step 1: The Reporting Manager and employee jointly identify improvement actions that are objective and clearly measurable. Step 2: Actions and success measures are filled in the prescribed CAP Form and signed by both parties. Step 3: The CAP runs for 4 weeks, with improvement actions reviewed weekly by the Review Panel (Reporting Manager + next-level Manager or an HR Representative). Any changes during CAP — role, manager, or location — must be notified in writing to the employee by HR."
+  },
+  {
+    "id": "76",
+    "category": "Corrective Action Plan (CAP)",
+    "question": "What happens if an employee successfully or unsuccessfully completes the CAP?",
+    "keywords": ["CAP outcome", "success", "failure", "30 days notice", "6 months", "relieved", "notice pay"],
+    "answer": "Success: The turnaround is recorded as an achievement in the Reporting Manager's records, the employee's targets may be revisited, and they receive positive reinforcement. Failure: HR communicates that the employee has lost the right to the job. If the employee has not completed 6 months, they are relieved on CAP completion. If they have completed 6 months, they are given 30 days of notice pay and relieved on CAP completion."
+  },
+  {
+    "id": "77",
+    "category": "Corrective Action Plan (CAP)",
+    "question": "What happens if the role is critical and the employee fails the CAP?",
+    "keywords": ["critical role", "CAP failure", "30-day notice", "replacement", "local HR"],
+    "answer": "If the role is critical and the employee cannot complete the CAP, they are required to serve a 30-day notice period until a replacement is found or someone is nominated to take charge. This must be clearly communicated by the local HR representative."
+  },
+  {
+    "id": "78",
+    "category": "POSH Policy",
+    "question": "What is the scope of the POSH Policy and who does it protect?",
+    "keywords": ["POSH", "sexual harassment", "workplace", "aggrieved woman", "2013 Act", "transportation", "all locations"],
+    "answer": "The policy prohibits, prevents, and addresses acts of sexual harassment at the workplace, in compliance with the Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013. The 'Workplace' includes all office locations, administrative units, AND any place visited by the employee in the course of employment, including transportation provided by the employer. An 'Aggrieved Woman' is any woman of any age, whether employed or not, who alleges to have been subject to sexual harassment by the respondent."
+  },
+  {
+    "id": "79",
+    "category": "POSH Policy",
+    "question": "Who are the current ICC members and what is their tenure?",
+    "keywords": ["ICC", "internal complaints committee", "Prerna Hajela", "Vasudha Bagri", "Gagandeep Singh", "Arpita Sawhney", "Sandeep Garg", "3 years", "2026"],
+    "answer": "As per Office Order dated 1st Jan 2026: (1) Ms. Prerna Hajela, VP — Presiding Officer; (2) Ms. Vasudha Bagri, Sr. Manager; (3) Mr. Gagandeep Singh, VP; (4) Ms. Arpita Sawhney, Advocate/External Member (Perfexio Legal); (5) Mr. Sandeep Garg, Sr. VP. Presiding Officer and members hold office for 3 years from the date of their nomination."
+  },
+  {
+    "id": "80",
+    "category": "POSH Policy",
+    "question": "What is the complaint filing process and timeline under POSH?",
+    "keywords": ["POSH complaint", "3 months", "written complaint", "ICC", "conciliation", "Section 10"],
+    "answer": "A written complaint must be filed to the Internal Complaints Committee within 3 months from the date of the incident, or from the date of the last incident in a series of incidents. If the aggrieved woman is unable to provide the complaint in writing, ICC members must render all reasonable assistance. Conciliation (Section 10) may be attempted before formal inquiry if requested by the complainant."
+  },
+  {
+    "id": "81",
+    "category": "POSH Policy",
+    "question": "What happens after the POSH inquiry is completed?",
+    "keywords": ["POSH inquiry", "ICC report", "10 days", "60 days", "employer action", "Section 13", "malicious complaint"],
+    "answer": "The ICC provides its report to the Employer within 10 days of completion. The Employer must act on the recommendation within 60 days. If no case is found, the complaint may be dropped. If the allegation is proven, the ICC recommends suitable action per Section 13. If the complaint is found to be malicious or knowingly false, action may be taken against the complainant per Section 14."
+  },
+  {
+    "id": "82",
+    "category": "POSH Policy",
+    "question": "What confidentiality and protection measures are in place for complainants?",
+    "keywords": ["POSH confidentiality", "identity protection", "retaliation", "victimization", "witnesses", "proceedings"],
+    "answer": "Strict confidentiality is maintained throughout — the identity of the complainant, respondent, and witnesses; all proceedings, recommendations, and actions taken are confidential and cannot be disclosed except under disciplinary processes or pursuant to a statutory/government/court order. IndiaMART ensures protection from any form of retaliation, victimization, or discrimination against the complainant or witnesses during and after the investigation."
+  },
+  {
+    "id": "83",
+    "category": "Grievance Redressal",
+    "question": "What types of grievances can be raised and what is excluded?",
+    "keywords": ["grievance", "attendance", "admin", "IT", "performance", "HR behaviour", "POSH excluded", "transgender", "personal issues"],
+    "answer": "Eligible grievance categories: Attendance-related, Admin-related, IT-related, Performance & Incentive-related, Service Infrastructure & Maintenance, Legal Assistance, and HR & Behaviour-related. Excluded: Non-work-related issues, personal life issues, and POSH-related concerns (which follow the separate POSH mechanism). IndiaMART does not discriminate against transgender persons; such instances can be reported to grievances@indiamart.com."
+  },
+  {
+    "id": "84",
+    "category": "Grievance Redressal",
+    "question": "How does an employee raise a grievance through WebERP?",
+    "keywords": ["grievance", "WebERP", "IIL ticket", "new issue", "HR SPOC", "feedback"],
+    "answer": "Log in to WebERP > click on IIL Tickets > New Issue/Feedback > select the relevant issue category > write the details > submit. The HR SPOC is notified and contacts the aggrieved employee to facilitate speedy resolution."
+  },
+  {
+    "id": "85",
+    "category": "Grievance Redressal",
+    "question": "What is the escalation process if a grievance is not resolved?",
+    "keywords": ["grievance escalation", "3 working days", "HOD", "Business Head", "HR Head", "closure", "dissatisfied"],
+    "answer": "Step 1: Process owner discusses and tries to resolve within 3 working days of ticket receipt. Step 2: If unresolved, escalated to the HOD; HR SPOC works with the individual and Business Head to resolve. Step 3 (Closure): Once resolution is updated, the individual who raised the ticket initiates closure (Satisfied or Dissatisfied). If against the HOD or HR themselves, the issue goes directly to the next higher level. If unresolved long-term, the Business Head and HR Head jointly resolve it."
+  },
+  {
+    "id": "86",
+    "category": "Grievance Redressal",
+    "question": "What happens in case of a dissatisfied closure?",
+    "keywords": ["dissatisfied closure", "RCA", "root cause analysis", "HRBP", "process improvement", "policy amendment"],
+    "answer": "A complete Root Cause Analysis (RCA) is conducted by the HR Business Partner and shared with management. Any suggested process improvement is considered for policy amendment after HR Head approval. Regular data analysis of tickets is done by respective HR SPOCs to identify repetitive pain points and drive process improvements."
+  },
+  {
+    "id": "87",
+    "category": "Grievance Redressal",
+    "question": "Who can close a grievance ticket and what happens if the employee leaves before resolution?",
+    "keywords": ["grievance closure", "ticket close", "employee exits", "manager", "on behalf"],
+    "answer": "Only the individual who raised the grievance can close the ticket. If the employee leaves the organization before the grievance is resolved, the responsibility to address the issue rolls up to the individual's manager. The manager then closes the ticket on behalf of the individual once resolved."
+  },
+  {
+    "id": "88",
+    "category": "Learning, Development & Career Growth",
+    "question": "What are the key learning and development programs at IndiaMART?",
+    "keywords": ["L&D", "Shubhaarambh", "OJT", "Skill Builder", "Product Builder", "MDP", "leadership program", "induction", "tech training"],
+    "answer": "Shubhaarambh: Induction program for all new joiners. Tech Shubhaarambh: Technical induction for tech teams. OJT (On Job Training): Hands-on role-based learning. Skill Builder: Bi-monthly skill enhancement sessions. Product Builder: Product update learning sessions. Leadership Programs: Development programs for L3 and above employees. MDP (Management Development Program): Conducted with premier management institutes."
+  },
+  {
+    "id": "89",
+    "category": "Learning, Development & Career Growth",
+    "question": "What is the Open House and how does it work?",
+    "keywords": ["open house", "quarterly forum", "HOD", "pre-questionnaire", "MOM", "FAQ", "policies", "compliance"],
+    "answer": "Open House is a quarterly forum for every HOD's span to provide employees with transparency on working, policies, procedures, and compliance. A Pre-Questionnaire Form is floated at least 2 days before the session. HODs and HR address queries during the session. Minutes of Meeting (MOM) are collected, and the company FAQ is updated monthly based on the outcomes."
+  },
+  {
+    "id": "90",
+    "category": "Learning, Development & Career Growth",
+    "question": "How are promotions decided at IndiaMART?",
+    "keywords": ["promotion", "performance", "A- rating", "band level", "HOD recommendation", "vacancy", "career growth"],
+    "answer": "Promotions depend on performance, relevant experience, and current organizational requirements. Employees must demonstrate consistent performance (typically A- or above rating). Promotions follow defined band/level structures and must align with available role vacancies and HOD recommendations."
+  },
+  {
+    "id": "91",
+    "category": "Learning, Development & Career Growth",
+    "question": "How can an employee request a role or project change, and what is the minimum tenure?",
+    "keywords": ["role change", "project change", "6 months", "manager", "HOD", "HR", "cross-learning", "reshuffling"],
+    "answer": "Employees must initiate a discussion with their Manager, HOD, and/or HR. The employee generally must have completed at least 6 months in their current role before requesting a change. Team reshuffling is also conducted proactively by the organization for cross-learning, broader exposure, and 360-degree growth."
+  },
+  {
+    "id": "92",
+    "category": "Learning, Development & Career Growth",
+    "question": "How can a partner payroll employee transition to IndiaMART's direct payroll?",
+    "keywords": ["partner payroll", "payroll transition", "A+ rating", "HOD recommendation", "vacancy", "direct payroll"],
+    "answer": "Three criteria must be met: (1) Vacancy availability for the role; (2) A+ performance rating; (3) HOD recommendation. If all three are satisfied, an offer is rolled out accordingly. This process is not available through self-application alone."
+  },
+  {
+    "id": "93",
+    "category": "Learning, Development & Career Growth",
+    "question": "What should an employee do if they have a tech learning need not addressed by current L&D sessions?",
+    "keywords": ["tech learning", "L&D", "HOD", "training need", "specialized training", "one-off training"],
+    "answer": "The employee can approach the L&D Team directly or raise the need through their HOD. Specialized or one-off training requirements are considered on a case basis depending on business relevance and budget availability."
+  },
+  {
+    "id": "94",
+    "category": "Rewards, Recognition & IT Support",
+    "question": "What are the Rewards & Recognition awards and their payout amounts?",
+    "keywords": ["RNR", "employee of the month", "best performer", "emerging star", "continuous excellence", "pillar of success", "5000", "2500", "taxable"],
+    "answer": "Employee of the Month: Rs. 5,000. Best Performer of the Month: Rs. 2,500. Emerging Star of the Month (0–180 days tenure): Rs. 2,500. Continuous Excellence: Rs. 2,500. Pillar of Success: No cash reward. Nominations are made by managers and approved by HODs and CXOs. All monetary reward amounts are taxable as per applicable tax rules."
+  },
+  {
+    "id": "95",
+    "category": "Rewards, Recognition & IT Support",
+    "question": "How can an employee reset their Gmail/official email password?",
+    "keywords": ["Gmail", "password reset", "HRHelpDesk", "employee ID", "IT support", "WebERP"],
+    "answer": "Contact HRHelpDesk@indiamart.com and provide your Employee ID. The HR team will share the new password. For other IT-related issues, employees can raise a ticket through WebERP or contact IT support directly."
+  },
+  {
+    "id": "96",
+    "category": "Rewards, Recognition & IT Support",
+    "question": "Who is eligible for laptop allocation and how is it obtained?",
+    "keywords": ["laptop", "allocation", "direct payroll", "IT support", "WebERP", "partner payroll"],
+    "answer": "Employees on IndiaMART's direct payroll are eligible for Laptop Allocation. To apply, contact the IT Support team or raise a request through WebERP. Partner payroll employees may need to check with their respective organization's IT team."
+  },
+  {
+    "id": "97",
+    "category": "Rewards, Recognition & IT Support",
+    "question": "How can an employee apply for expense reimbursement?",
+    "keywords": ["expense reimbursement", "reimbursement form", "HOD approval", "payable helpdesk", "WebERP", "admin"],
+    "answer": "Download the Expense Reimbursement Form from Docs & Proposal section (Support >> Admin >> Expense Reimbursement Form in WebERP). Get HOD approval on the form, then submit it to payablehelpdesk@indiamart.com."
+  },
+  {
+    "id": "98",
+    "category": "Rewards, Recognition & IT Support",
+    "question": "How can an employee get a parking facility at the office?",
+    "keywords": ["parking", "RC copy", "car details", "Rajesh Kumar Choudhary", "WebERP", "Rajeshn@indiamart.com"],
+    "answer": "Share car details along with the RC Copy to Rajeshn@indiamart.com, or raise a ticket under Parking Facility > Service/Infra & Admin (assigned to Rajesh Kumar Choudhary) in WebERP."
+  },
+  {
+    "id": "99",
+    "category": "TA Incentive Policy",
+    "question": "Who is covered under the TA Incentive Policy and what are the key rules?",
+    "keywords": ["TA incentive", "recruiter", "hiring manager", "30 days attrition", "net joinings", "active employee", "September 2025"],
+    "answer": "All Recruiters and Hiring Managers involved in hiring are covered. Key rules: (1) Joinings with less than 30 days attrition from DOJ are not counted. (2) Payout is on net joinings (Total Joinings minus Deletions). (3) Payout only occurs if the recruiter is an active employee on the date of disbursement. Applicable to all joinings on or after 22nd September 2025."
+  },
+  {
+    "id": "100",
+    "category": "TA Incentive Policy",
+    "question": "What is the recruiter incentive slab for L1 hiring and how does the Weekly Activation Booster work?",
+    "keywords": ["recruiter incentive", "L1 hiring", "600", "750", "1000", "weekly activation booster", "active week", "80%", "100%", "125%"],
+    "answer": "Base slab: Minimum 2 joinings/week: Rs. 600 per joining; 3 joinings: Rs. 750 per joining; 4+ joinings: Rs. 1,000 per joining. Weekly Activation Booster (out of 5 active weeks): 0–2 active weeks = 0% payout; 3 active weeks = 80% payout; 4 active weeks = 100% payout; 5 active weeks = 125% payout. An 'active week' = minimum 1 joining for the recruiter."
+  },
+  {
+    "id": "101",
+    "category": "TA Incentive Policy",
+    "question": "What is the Team Leader incentive for L1 hiring and how does the TL booster work?",
+    "keywords": ["TL incentive", "team leader", "L1 hiring", "200", "300", "400", "TL booster", "active week", "productivity"],
+    "answer": "Based on weekly team joining productivity: 1.5 joinings/recruiter/week = Rs. 200 per joining; 2 joinings = Rs. 300; 2.5 joinings = Rs. 400. TL Weekly Activation Booster: 0–2 active weeks = 0%; 3 = 80%; 4 = 100%; 5 = 125%. An 'active week' for TL means meeting the minimum 1x productivity level."
+  },
+  {
+    "id": "102",
+    "category": "TA Incentive Policy",
+    "question": "What is the recruiter incentive structure for L2 and above hiring?",
+    "keywords": ["recruiter incentive", "L2 hiring", "monthly", "1000", "1250", "1500", "team leader", "500", "750"],
+    "answer": "Monthly basis: 3 joinings = Rs. 1,000 per joining; 5 joinings = Rs. 1,250 per joining; 7 joinings = Rs. 1,500 per joining. Team Leader monthly: 8 joinings = Rs. 500 per joining; 12 joinings = Rs. 750 per joining; 16 joinings = Rs. 1,000 per joining."
+  },
+  {
+    "id": "103",
+    "category": "TA Incentive Policy",
+    "question": "What is the Campus Hiring incentive structure?",
+    "keywords": ["campus hiring", "monthly slab", "20 joinings", "150", "200", "300", "minimum 20"],
+    "answer": "Monthly slab: 20–30 joinings: Rs. 150 per joining; 31–50 joinings: Rs. 200 per joining; 50+ joinings: Rs. 300 per joining. The minimum joining count to be eligible for any campus hiring incentive payout is 20 joinings in a month."
   }
 ]

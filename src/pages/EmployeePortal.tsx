@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 export default function EmployeePortal() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'chatbot' | 'tickets' | 'directory' | 'benefits'>('chatbot');
+  const [activeTab, setActiveTab] = useState<'chatbot' | 'tickets' | 'directory' | 'benefits' | 'exit-interview'>('chatbot');
   const [tickets, setTickets] = useState<any[]>([]);
   const [loadingTickets, setLoadingTickets] = useState(false);
   const [exitRequest, setExitRequest] = useState<any>(null);

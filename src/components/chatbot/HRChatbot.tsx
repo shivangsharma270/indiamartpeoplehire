@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2, Sparkles, AlertCircle, Ticket, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import ReactMarkdown from 'react-markdown';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../App';
 import { toast } from 'sonner';
@@ -129,44 +130,61 @@ export default function HRChatbot() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
-        {messages.map((msg) => (
-          <motion.div
-            key={msg.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div className={`flex gap-3 max-w-[80%] ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-              <div className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center ${msg.sender === 'bot' ? 'bg-red-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
-                {msg.sender === 'bot' ? <Sparkles size={16} /> : <User size={16} />}
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50 relative">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#0f172a 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+        
+        <div className="relative z-10 space-y-6">
+          {messages.map((msg) => (
+            <motion.div
+              key={msg.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`flex gap-3 max-w-[85%] ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                <div className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center shadow-sm ${msg.sender === 'bot' ? 'bg-red-600 text-white' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                  {msg.sender === 'bot' ? <Sparkles size={16} /> : <User size={16} />}
+                </div>
+                <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-md border ${
+                  msg.sender === 'user' 
+                    ? 'bg-slate-900 text-white border-slate-800 rounded-tr-none' 
+                    : 'bg-white text-slate-700 border-white rounded-tl-none ring-1 ring-slate-100'
+                }`}>
+                  <div className={`prose prose-sm max-w-none ${msg.sender === 'user' ? 'prose-invert' : 'prose-slate'}`}>
+                    <ReactMarkdown 
+                      components={{
+                        p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed tracking-tight">{children}</p>,
+                        ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1.5">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1.5">{children}</ol>,
+                        li: ({ children }) => <li className="marker:text-red-500/50">{children}</li>,
+                        strong: ({ children }) => <strong className={`font-bold ${msg.sender === 'bot' ? 'text-red-600' : 'text-rose-300'}`}>{children}</strong>,
+                      }}
+                    >
+                      {msg.text}
+                    </ReactMarkdown>
+                  </div>
+                  <div className={`text-[9px] mt-2 font-bold opacity-30 uppercase tracking-widest ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                    {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
               </div>
-              <div className={`p-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm border ${
-                msg.sender === 'user' 
-                  ? 'bg-slate-900 text-white border-slate-800 rounded-tr-none' 
-                  : 'bg-white text-slate-700 border-slate-100 rounded-tl-none'
-              }`}>
-                {msg.text}
-                <div className={`text-[9px] mt-2 font-bold opacity-40 uppercase tracking-widest ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </motion.div>
+          ))}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="flex gap-3 max-w-[80%]">
+                <div className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center shadow-lg shadow-red-200">
+                  <Sparkles size={16} className="animate-pulse" />
+                </div>
+                <div className="p-4 bg-white border border-slate-100 rounded-2xl rounded-tl-none flex items-center gap-2 shadow-sm">
+                  <Loader2 size={16} className="animate-spin text-red-600" />
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">AI is drafting answer...</span>
                 </div>
               </div>
             </div>
-          </motion.div>
-        ))}
-        {loading && (
-          <div className="flex justify-start">
-            <div className="flex gap-3 max-w-[80%]">
-              <div className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center">
-                <Sparkles size={16} className="animate-pulse" />
-              </div>
-              <div className="p-4 bg-white border border-slate-100 rounded-2xl rounded-tl-none flex items-center gap-2">
-                <Loader2 size={16} className="animate-spin text-red-600" />
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">AI is thinking...</span>
-              </div>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
         <div ref={messagesEndRef} />
       </div>
 
