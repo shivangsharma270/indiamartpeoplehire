@@ -205,10 +205,6 @@ export default function AdminDashboard() {
                  </div>
                  <div>
                    <h2 className="text-lg md:text-2xl font-black text-slate-900 tracking-tight">HirePilot AI <span className="text-slate-300 font-light mx-1 md:mx-2">/</span> Command</h2>
-                   <div className="flex items-center gap-2 text-[10px] md:text-xs text-slate-500 font-bold mt-0.5">
-                     <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                     Live Talent Intake
-                   </div>
                  </div>
               </div>
               <div className="flex gap-2 w-full md:w-auto">
@@ -230,14 +226,9 @@ export default function AdminDashboard() {
             </div>
 
             <div className="flex-1 overflow-auto p-4 md:p-6 space-y-6">
-              <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 shrink-0">
-                <CompactStatsCard icon={<Briefcase size={18} />} label="Open Roles" value={jobs.length} color="red" />
+              <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 shrink-0">
+                <CompactStatsCard icon={<Briefcase size={18} />} label="Open Roles" value={jobs.filter(j => j.status !== 'filled').length} color="red" />
                 <CompactStatsCard icon={<Users size={18} />} label="Applicants" value={applications.length} color="blue" />
-                <CompactStatsCard icon={<TrendingUp size={18} />} label="Avg AI Score" value={
-                  applications.length > 0 
-                  ? Math.round(applications.reduce((acc, app) => acc + (app.ai_score?.score || 0), 0) / applications.length)
-                  : 0
-                } suffix="%" color="emerald" />
               </section>
 
               <div className="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row min-h-0 overflow-hidden">

@@ -27,7 +27,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       { label: 'Active Jobs', path: '/admin/jobs', icon: Briefcase },
       { label: 'Employee Track', path: '/admin/employee-track', icon: ShieldCheck },
       { label: 'L&D Planner', path: '/admin/ld-planner', icon: Zap },
-      { label: 'Exit Analysis', path: '/admin/exit-management', icon: LogOut },
+      { label: 'Exit Interview Analysis', path: '/admin/exit-management', icon: LogOut },
     ];
   } else if (role === 'employee') {
     menuItems = [

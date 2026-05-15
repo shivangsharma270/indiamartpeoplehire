@@ -70,7 +70,7 @@ export default function AdminExitManagement() {
        <header className="px-8 py-6 bg-white border-b border-slate-200">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
              <div>
-                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Exit Analysis <span className="text-red-600">& Attrition</span></h1>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Exit Interview <span className="text-red-600">Analysis</span></h1>
                 <p className="text-sm font-medium text-slate-500">Managing the final chapter of employee journeys</p>
              </div>
              <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
@@ -124,6 +124,20 @@ export default function AdminExitManagement() {
                                     <td className="px-6 py-5">
                                        <div className="font-bold text-slate-900">{req.user_name}</div>
                                        <div className="text-xs text-slate-500">{req.user_email}</div>
+                                       {req.separation_reason && (
+                                         <div className="mt-3 space-y-1">
+                                           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Separation Reason</div>
+                                           <div className="text-sm font-medium text-slate-700">{req.separation_reason}</div>
+                                           
+                                           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-2">Comments</div>
+                                           <div className="text-sm font-medium text-slate-600 line-clamp-2">{req.resignation_comments}</div>
+                                           
+                                           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-2">Dates</div>
+                                           <div className="text-xs font-semibold text-slate-600">
+                                              Resigned: {new Date(req.resignation_date).toLocaleDateString()} • LWD: {new Date(req.last_working_date).toLocaleDateString()}
+                                           </div>
+                                         </div>
+                                       )}
                                     </td>
                                     <td className="px-6 py-5 text-sm text-slate-600 font-medium">
                                        {new Date(req.created_at).toLocaleDateString()}
@@ -133,6 +147,7 @@ export default function AdminExitManagement() {
                                           req.status === 'approved' ? 'bg-blue-50 text-blue-600 border-blue-100' :
                                           req.status === 'pending' ? 'bg-amber-50 text-amber-600 border-amber-100' :
                                           req.status === 'interview_completed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                                          req.status === 'revoked' ? 'bg-red-50 text-red-600 border-red-100' :
                                           'bg-slate-50 text-slate-500 border-slate-100'
                                        }`}>
                                           {req.status.replace('_', ' ')}
@@ -241,15 +256,15 @@ export default function AdminExitManagement() {
                                   <div className="grid grid-cols-2 gap-6">
                                      <div className="space-y-4">
                                         <div>
-                                           <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Primary Reason</h4>
+                                           <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Primary Category</h4>
                                            <div className="bg-white px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700">
-                                              {selectedInterview.insights?.primary_reason || 'N/A'}
+                                              {selectedInterview.insights?.primaryCategory || 'N/A'}
                                            </div>
                                         </div>
                                         <div>
-                                           <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Root Causes</h4>
+                                           <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Root Causes / Themes</h4>
                                            <div className="flex flex-wrap gap-1.5">
-                                              {selectedInterview.insights?.root_causes?.map((rc: string, i: number) => (
+                                              {selectedInterview.insights?.themes?.map((rc: string, i: number) => (
                                                  <span key={i} className="px-3 py-1 bg-red-50 text-red-600 border border-red-100 rounded-lg text-[10px] font-bold uppercase">{rc}</span>
                                               ))}
                                            </div>
@@ -258,10 +273,16 @@ export default function AdminExitManagement() {
                                      <div>
                                         <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">HR Recommendations</h4>
                                         <ul className="space-y-2">
-                                           {selectedInterview.insights?.recommendations?.map((rec: string, i: number) => (
-                                              <li key={i} className="flex gap-2 items-start text-xs font-medium text-slate-600">
-                                                 <CheckCircle2 size={12} className="text-emerald-500 mt-0.5 shrink-0" />
-                                                 {rec}
+                                           {selectedInterview.insights?.improvementAreas?.map((rec: any, i: number) => (
+                                              <li key={i} className="flex flex-col gap-1 text-xs font-medium text-slate-600 mb-3 border-b border-slate-100 pb-2 last:border-b-0">
+                                                 <div className="flex gap-2 items-start">
+                                                    <CheckCircle2 size={12} className="text-emerald-500 mt-0.5 shrink-0" />
+                                                    <span className="font-bold text-slate-800">{rec.recommendation}</span>
+                                                 </div>
+                                                 <div className="pl-5 text-[10px] text-slate-400">
+                                                    <span className="font-semibold text-slate-500">Problem:</span> {rec.problem}
+                                                    <span className={`ml-2 px-1.5 py-0.5 rounded uppercase font-bold text-[8px] tracking-widest ${rec.priority === 'High' ? 'bg-red-50 text-red-600' : rec.priority === 'Medium' ? 'bg-amber-50 text-amber-600' : 'bg-slate-100 text-slate-500'}`}>{rec.priority} Priority</span>
+                                                 </div>
                                               </li>
                                            ))}
                                         </ul>

@@ -5,7 +5,7 @@ import {
   Library, Search, Filter, BookOpen, Target, 
   ChevronRight, Award, Zap, BarChart3, Users, 
   Sparkles, Calendar, CheckCircle2, AlertCircle,
-  TrendingUp, Lightbulb, PenTool, Layout, ArrowUpRight, X
+  TrendingUp, Lightbulb, PenTool, Layout, ArrowUpRight, X, Loader2
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { LdService } from '../services/ldService';
@@ -37,6 +37,8 @@ export default function AdminLdDashboard() {
   const [ldPath, setLdPath] = useState<any>(null);
   const [deptStrategy, setDeptStrategy] = useState<any>(null);
   const [generatingDept, setGeneratingDept] = useState(false);
+  const [globalInsights, setGlobalInsights] = useState<any>(null);
+  const [generatingInsights, setGeneratingInsights] = useState(false);
 
   const ldService = new LdService();
 
@@ -45,6 +47,39 @@ export default function AdminLdDashboard() {
     fetchCourses();
     fetchProgress();
   }, []);
+
+  useEffect(() => {
+    if (selectedDept !== 'All') {
+      fetchDeptStrategy(selectedDept);
+    } else {
+      setDeptStrategy(null);
+    }
+  }, [selectedDept]);
+
+  const fetchDeptStrategy = async (dept: string) => {
+    setDeptStrategy(null);
+    try {
+      const { data, error } = await supabase
+        .from('department_strategies')
+        .select('*')
+        .eq('department', dept)
+        .maybeSingle();
+
+      if (error) {
+        // If table doesn't exist yet, we just handle it gracefully
+        if (!error.message.includes('does not exist')) {
+          console.error('Fetch Dept Strategy Error:', error);
+        }
+        return;
+      }
+      
+      if (data) {
+        setDeptStrategy(data.strategy);
+      }
+    } catch (err) {
+      console.error('Fetch Dept Strategy Catch Error:', err);
+    }
+  };
 
   const fetchCourses = async () => {
     try {
@@ -132,12 +167,41 @@ export default function AdminLdDashboard() {
     try {
       const deptEmployees = employees.filter(e => e.department === selectedDept);
       const result = await ldService.generateDepartmentStrategy(selectedDept, deptEmployees);
+      
+      // Attempt to save to Supabase
+      const { error } = await supabase
+        .from('department_strategies')
+        .upsert({
+          department: selectedDept,
+          strategy: result,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'department' });
+
+      if (error && !error.message.includes('does not exist')) {
+        console.warn('Could not save strategy to DB:', error.message);
+      }
+
       setDeptStrategy(result);
       toast.success(`${selectedDept} Department Strategy Generated`);
     } catch (err: any) {
+      console.error(err);
       toast.error("Failed to generate department strategy");
     } finally {
       setGeneratingDept(false);
+    }
+  };
+
+  const handleGenerateGlobalInsights = async () => {
+    setGeneratingInsights(true);
+    try {
+      const result = await ldService.generateGlobalInsights(employees, progressData, courses);
+      setGlobalInsights(result);
+      toast.success("Organizational AI Insights Generated");
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Failed to generate overall insights");
+    } finally {
+      setGeneratingInsights(false);
     }
   };
 
@@ -199,6 +263,7 @@ export default function AdminLdDashboard() {
   }, [selectedEmployee]);
 
   const fetchLdPath = async (userId: string) => {
+    setLdPath(null);
     try {
       const { data, error } = await supabase
         .from('learning_paths')
@@ -261,26 +326,26 @@ export default function AdminLdDashboard() {
               </h1>
               <p className="text-slate-500 font-medium text-sm mt-1">Manage talent growth & training modules</p>
             </div>
-            <div className="flex bg-slate-100 p-1 rounded-2xl">
-              <button 
-                onClick={() => setActiveTab('talent')}
-                className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'talent' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-              >
-                Talent Planning
-              </button>
-              <button 
-                onClick={() => setActiveTab('courses')}
-                className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'courses' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-              >
-                Course Management
-              </button>
-              <button 
-                onClick={() => setActiveTab('insights')}
-                className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'insights' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-              >
-                Insights
-              </button>
-            </div>
+              <div className="flex bg-slate-100 p-1.5 rounded-[20px] shadow-inner">
+                <button 
+                  onClick={() => setActiveTab('talent')}
+                  className={`px-6 py-3 rounded-[14px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'talent' ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+                >
+                  Talent Planning
+                </button>
+                <button 
+                  onClick={() => setActiveTab('courses')}
+                  className={`px-6 py-3 rounded-[14px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'courses' ? 'bg-red-600 text-white shadow-lg shadow-red-100' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+                >
+                  Learning Resources
+                </button>
+                <button 
+                  onClick={() => setActiveTab('insights')}
+                  className={`px-6 py-3 rounded-[14px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'insights' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+                >
+                  Insights
+                </button>
+              </div>
           </div>
           
           <div className="flex items-center justify-between">
@@ -289,19 +354,26 @@ export default function AdminLdDashboard() {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                   <input 
                     type="text" 
-                    placeholder={activeTab === 'talent' ? "Search talent..." : activeTab === 'courses' ? "Search courses..." : "Search insights..."}
+                    placeholder={activeTab === 'talent' ? "Search talent..." : activeTab === 'courses' ? "Search resources..." : "Search insights..."}
                     className="pl-12 pr-6 py-3 bg-slate-50 border border-slate-200 rounded-2xl w-64 text-sm font-medium focus:ring-2 focus:ring-red-500 outline-none transition-all"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                </div>
                {activeTab !== 'insights' && (
-                 <div className="flex p-1 bg-slate-100 rounded-xl overflow-x-auto no-scrollbar max-w-lg">
+                 <div className="flex p-1.5 bg-white border border-slate-200 rounded-2xl overflow-x-auto no-scrollbar max-w-lg shadow-sm">
                     {departments.map(dept => (
                       <button 
                         key={dept} 
                         onClick={() => setSelectedDept(dept)}
-                        className={`px-4 py-2 rounded-lg text-[10px] whitespace-nowrap font-black uppercase tracking-widest transition-all ${selectedDept === dept ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`px-4 py-2 rounded-xl text-[10px] whitespace-nowrap font-black uppercase tracking-widest transition-all ${
+                          selectedDept === dept 
+                            ? (dept === 'NSD' ? 'bg-red-600 text-white shadow-md' : 
+                               dept === 'SOA' ? 'bg-indigo-600 text-white shadow-md' :
+                               dept === 'Technical' ? 'bg-slate-900 text-white shadow-md' :
+                               'bg-slate-900 text-white shadow-md')
+                            : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                        }`}
                       >
                         {dept}
                       </button>
@@ -324,9 +396,9 @@ export default function AdminLdDashboard() {
                   });
                   setShowAddCourse(true);
                 }}
-                className="px-6 py-3 bg-red-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all shadow-lg shadow-red-100 flex items-center gap-2"
+                className="px-6 py-3 bg-gradient-to-r from-red-600 to-rose-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-red-200 flex items-center gap-2"
               >
-                <Zap size={14} /> Create Course
+                <Zap size={14} className="fill-current" /> Create Course
               </button>
             )}
           </div>
@@ -403,13 +475,13 @@ export default function AdminLdDashboard() {
                           <button 
                            onClick={handleGeneratePath}
                            disabled={generating}
-                           className="p-5 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 flex flex-col items-center gap-1 group"
+                           className="p-5 bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl hover:scale-110 active:scale-95 transition-all shadow-2xl shadow-slate-300 flex flex-col items-center gap-1 group border border-slate-700"
                           >
                              {generating ? (
                                 <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                              ) : (
                                 <>
-                                   <Sparkles size={20} className="group-hover:scale-110 transition-transform" />
+                                   <Sparkles size={20} className="group-hover:text-red-500 transition-colors" />
                                    <span className="text-[10px] font-black uppercase tracking-widest">Plan with AI</span>
                                 </>
                              )}
@@ -527,13 +599,13 @@ export default function AdminLdDashboard() {
                                    </div>
                                 </div>
                              ) : (
-                                <button 
-                                 onClick={handleGenerateDeptStrategy}
-                                 disabled={generatingDept}
-                                 className="mt-8 px-10 py-5 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3"
-                                >
-                                   <Sparkles size={16} /> {generatingDept ? "Orchestrating..." : "Generate Dept Strategy"}
-                                </button>
+                              <button 
+                               onClick={handleGenerateDeptStrategy}
+                               disabled={generatingDept}
+                               className="mt-8 px-10 py-5 bg-gradient-to-r from-red-600 to-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-red-100 flex items-center gap-3 border border-red-500/20"
+                              >
+                                 <Sparkles size={16} className="text-red-400" /> {generatingDept ? "Orchestrating..." : "Generate Dept Strategy"}
+                              </button>
                              )}
                           </div>
                        </div>
@@ -595,6 +667,17 @@ export default function AdminLdDashboard() {
         ) : (
            <div className="flex-1 p-10 overflow-y-auto no-scrollbar bg-slate-50/30">
               <div className="max-w-7xl mx-auto space-y-10">
+                 <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Organization L&D Intelligence</h2>
+                    <button 
+                      onClick={handleGenerateGlobalInsights}
+                      disabled={generatingInsights}
+                      className="px-8 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-indigo-200 flex items-center gap-3"
+                    >
+                      {generatingInsights ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} className="text-indigo-200" />}
+                      {generatingInsights ? 'Analyzing Trends...' : 'Generate Organizational Insights'}
+                    </button>
+                 </div>
                  <div className="grid grid-cols-4 gap-6">
                     <MetricCard 
                       icon={<Users size={18} />} 
@@ -697,7 +780,7 @@ export default function AdminLdDashboard() {
                              <Lightbulb size={20} className="text-amber-400" /> AI Recommendation
                           </h3>
                           <p className="text-sm text-slate-400 font-medium leading-relaxed italic border-l-2 border-red-600 pl-4">
-                             "The {departments[Math.floor(Math.random() * departments.length)]} department is showing 20% higher engagement in Video modules. Consider converting PDF resources to interactive video format for other teams."
+                             {globalInsights ? globalInsights.recommendation : "Click Generate AI Insights to explore trends."}
                           </p>
                        </div>
                     </div>

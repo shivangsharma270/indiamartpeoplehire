@@ -32,15 +32,29 @@ export default function Apply() {
     async function checkStatus() {
       if (!user?.id || !jobId) return;
       
-      const { data: existingApp } = await supabase
-        .from('applications')
-        .select('id')
-        .eq('job_id', jobId)
-        .eq('candidate_id', user.id)
-        .maybeSingle();
+      // Fetch job status and check if already applied
+      const [appResult, jobResult] = await Promise.all([
+        supabase
+          .from('applications')
+          .select('id')
+          .eq('job_id', jobId)
+          .eq('candidate_id', user.id)
+          .maybeSingle(),
+        supabase
+          .from('jobs')
+          .select('status')
+          .eq('id', jobId)
+          .single()
+      ]);
 
-      if (existingApp) {
+      if (appResult.data) {
         setHasApplied(true);
+      }
+
+      if (jobResult.data?.status === 'filled') {
+        toast.error('This position has already been filled.');
+        navigate('/dashboard');
+        return;
       }
 
       const { data } = await supabase.from('candidates').select('*').eq('id', user.id).single();

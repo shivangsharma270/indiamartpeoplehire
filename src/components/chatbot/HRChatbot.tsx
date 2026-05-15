@@ -256,11 +256,19 @@ export default function HRChatbot() {
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-red-500"
                 >
                   <option value="">Select Category</option>
-                  <option value="Payroll">Payroll / Salary</option>
-                  <option value="Leave">Leaves / Attendance</option>
-                  <option value="IT">IT Support</option>
-                  <option value="Policy">Policy Clarification</option>
-                  <option value="Other">Other Issues</option>
+                  <option value="Payroll, Attendance & Mediclaim">Payroll, Attendance & Mediclaim</option>
+                  <option value="Printing & Stationery & Visiting Card">Printing & Stationery & Visiting Card</option>
+                  <option value="Human Resources">Human Resources</option>
+                  <option value="Computer & Internet">Computer & Internet</option>
+                  <option value="My Performance, Incentives & Contests">My Performance, Incentives & Contests</option>
+                  <option value="Service Infra ‘n’ Maintenance">Service Infra ‘n’ Maintenance</option>
+                  <option value="Legal Assistance">Legal Assistance</option>
+                  <option value="WebERP Change Request">WebERP Change Request</option>
+                  <option value="Call To Customer (C2C)">Call To Customer (C2C)</option>
+                  <option value="Vendor Expense Approval">Vendor Expense Approval</option>
+                  <option value="Potential Security Incident">Potential Security Incident</option>
+                  <option value="Compliance tool assistance">Compliance tool assistance</option>
+                  <option value="HR and Profile Related Issues">HR and Profile Related Issues</option>
                 </select>
               </div>
               <div>

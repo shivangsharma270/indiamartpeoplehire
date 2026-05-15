@@ -83,6 +83,11 @@ export default function JobDetails() {
                 <CheckCircle size={20} className="text-green-500" />
                 Already Applied
               </div>
+            ) : job.status === 'filled' ? (
+              <div className="bg-amber-50 text-amber-600 px-6 py-4 rounded-xl font-bold text-lg border border-amber-200 flex items-center gap-2 self-start shrink-0 cursor-not-allowed shadow-sm shadow-amber-50">
+                <Briefcase size={20} />
+                Position Filled
+              </div>
             ) : (
               <Link
                 to={`/apply/${job.id}`}

@@ -21,7 +21,11 @@ export default function CandidateDashboard() {
 
   const fetchData = async () => {
     setLoading(true);
-    const { data: jobsData } = await supabase.from('jobs').select('*').order('created_at', { ascending: false });
+    const { data: jobsData } = await supabase
+      .from('jobs')
+      .select('*')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false });
     const { data: appsData } = await supabase
       .from('applications')
       .select('*, job:jobs(*)')

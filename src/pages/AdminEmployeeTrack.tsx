@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { motion, AnimatePresence } from 'motion/react';
-import { Ticket, Search, Filter, Clock, CheckCircle2, AlertCircle, MessageSquare, ShieldCheck, User, ArrowRight, X } from 'lucide-react';
+import { Ticket, Search, Filter, Clock, CheckCircle2, AlertCircle, MessageSquare, ShieldCheck, User, ArrowRight, X, Heart, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminEmployeeTrack() {
@@ -12,6 +12,9 @@ export default function AdminEmployeeTrack() {
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
   const [resolutionText, setResolutionText] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [replies, setReplies] = useState<any[]>([]);
+  const [adminReply, setAdminReply] = useState('');
+  const [sendingReply, setSendingReply] = useState(false);
 
   useEffect(() => {
     fetchTickets();
@@ -27,10 +30,68 @@ export default function AdminEmployeeTrack() {
 
       if (error) throw error;
       setTickets(data || []);
+      
+      if (selectedTicket) {
+        const updated = data?.find(t => t.id === selectedTicket.id);
+        if (updated) setSelectedTicket(updated);
+      }
     } catch (error: any) {
       toast.error('Failed to load tickets');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReplies = async (ticketId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('ticket_replies')
+        .select('*')
+        .eq('ticket_id', ticketId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      setReplies(data || []);
+    } catch (error) {
+      console.error('Error fetching replies:', error);
+    }
+  };
+
+  const handleSendAdminReply = async () => {
+    if (!adminReply.trim() || !selectedTicket) return;
+    setSendingReply(true);
+    try {
+      const { error } = await supabase.from('ticket_replies').insert({
+        ticket_id: selectedTicket.id,
+        user_id: 'admin',
+        user_name: 'HR Admin',
+        message: adminReply,
+        sender_type: 'admin'
+      });
+
+      if (error) throw error;
+
+      // Update ticket status to in_progress if it was open
+      if (selectedTicket.status === 'open') {
+        await supabase
+          .from('employee_tickets')
+          .update({ status: 'in_progress', updated_at: new Date().toISOString() })
+          .eq('id', selectedTicket.id);
+      } else {
+        await supabase
+          .from('employee_tickets')
+          .update({ updated_at: new Date().toISOString() })
+          .eq('id', selectedTicket.id);
+      }
+
+      setAdminReply('');
+      fetchReplies(selectedTicket.id);
+      fetchTickets();
+      toast.success("Reply sent to employee");
+    } catch (error) {
+      toast.error("Failed to send reply");
+    } finally {
+      setSendingReply(false);
     }
   };
 
@@ -162,7 +223,10 @@ export default function AdminEmployeeTrack() {
               {filteredTickets.map((ticket) => (
                 <div 
                   key={ticket.id} 
-                  onClick={() => setSelectedTicket(ticket)}
+                  onClick={() => {
+                    setSelectedTicket(ticket);
+                    fetchReplies(ticket.id);
+                  }}
                   className={`bg-white p-6 rounded-[2rem] border transition-all cursor-pointer group ${
                     selectedTicket?.id === ticket.id ? 'border-slate-900 shadow-xl scale-[1.01]' : 'border-slate-200 hover:border-slate-300 hover:shadow-md'
                   }`}
@@ -171,11 +235,13 @@ export default function AdminEmployeeTrack() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-3">
                         <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${
-                          ticket.status === 'resolved' 
+                          ticket.status === 'resolved' || ticket.status === 'closed'
                             ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
-                            : 'bg-red-50 text-red-600 border-red-100'
+                            : ticket.status === 'in_progress'
+                            ? 'bg-blue-50 text-blue-600 border-blue-100'
+                            : 'bg-amber-50 text-amber-600 border-amber-100'
                         }`}>
-                          {ticket.status}
+                          {ticket.status === 'in_progress' ? 'In Process' : ticket.status === 'open' ? 'Awaiting Review' : ticket.status}
                         </span>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{ticket.category}</span>
                       </div>
@@ -262,7 +328,7 @@ export default function AdminEmployeeTrack() {
                     <p className="text-slate-700 font-medium leading-relaxed italic">"{selectedTicket.description}"</p>
                   </div>
 
-                  {selectedTicket.status === 'resolved' ? (
+                  {selectedTicket.status === 'resolved' || selectedTicket.status === 'closed' ? (
                     <div className="space-y-4">
                        <div className="bg-emerald-50/50 p-6 rounded-3xl border border-emerald-100">
                          <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-3 flex items-center gap-2">
@@ -270,29 +336,81 @@ export default function AdminEmployeeTrack() {
                          </p>
                          <p className="text-emerald-900 font-bold leading-relaxed">"{selectedTicket.resolution}"</p>
                          <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest mt-4">
-                           Resolved on {new Date(selectedTicket.resolved_at).toLocaleString()}
+                           {selectedTicket.status === 'closed' ? 'Closed' : 'Resolved'} on {new Date(selectedTicket.resolved_at || selectedTicket.closed_at).toLocaleString()}
                          </p>
                        </div>
+                       
+                       {selectedTicket.feedback && (
+                         <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100">
+                            <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-3 flex items-center gap-2">
+                              <Heart size={12} /> Employee Feedback
+                            </p>
+                            <p className="text-blue-900 font-medium italic">"{selectedTicket.feedback}"</p>
+                         </div>
+                       )}
                     </div>
                   ) : (
-                    <form onSubmit={handleResolve} className="space-y-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-900 uppercase tracking-widest ml-1">Provide Resolution / Solution</label>
-                        <textarea 
-                          rows={4}
-                          value={resolutionText}
-                          onChange={(e) => setResolutionText(e.target.value)}
-                          placeholder="Type the resolution or steps taken to solve this issue..."
-                          className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:ring-2 focus:ring-slate-900 transition-all outline-none font-medium resize-none text-sm"
-                        />
+                    <div className="space-y-6">
+                      {/* Replies List */}
+                      <div className="space-y-4 max-h-64 overflow-y-auto pr-2 no-scrollbar">
+                        {replies.length > 0 ? (
+                          replies.map((reply) => (
+                            <div key={reply.id} className={`flex ${reply.sender_type === 'admin' ? 'justify-end' : 'justify-start'}`}>
+                               <div className={`max-w-[90%] p-4 rounded-2xl text-sm ${reply.sender_type === 'admin' ? 'bg-slate-900 text-white rounded-tr-none' : 'bg-slate-100 text-slate-700 rounded-tl-none'}`}>
+                                  <div className="flex items-center gap-2 mb-1">
+                                     <span className="text-[9px] font-black uppercase tracking-widest opacity-60">{reply.user_name}</span>
+                                  </div>
+                                  <p className="font-medium">{reply.message}</p>
+                                  <p className="text-[8px] mt-1 opacity-40">{new Date(reply.created_at).toLocaleTimeString()}</p>
+                               </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-4 border-2 border-dashed border-slate-100 rounded-2xl">
+                             <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No conversation history yet</p>
+                          </div>
+                        )}
                       </div>
-                      <button 
-                        disabled={submitting}
-                        className="w-full bg-slate-900 text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-[0.98] disabled:opacity-50"
-                      >
-                        {submitting ? 'Updating System...' : 'Resolve Ticket Now'}
-                      </button>
-                    </form>
+
+                      {/* Admin Reply Form */}
+                      <div className="flex gap-2">
+                        <textarea 
+                          rows={2}
+                          value={adminReply}
+                          onChange={(e) => setAdminReply(e.target.value)}
+                          placeholder="Reply to employee..."
+                          className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none font-medium resize-none text-sm"
+                        />
+                        <button 
+                          onClick={handleSendAdminReply}
+                          disabled={sendingReply || !adminReply.trim()}
+                          className="px-4 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-100 disabled:opacity-50 flex items-center justify-center shrink-0"
+                        >
+                          {sendingReply ? <Loader2 size={18} className="animate-spin" /> : <ArrowRight size={20} />}
+                        </button>
+                      </div>
+
+                      <div className="pt-4 border-t border-slate-100">
+                        <form onSubmit={handleResolve} className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black text-slate-900 uppercase tracking-widest ml-1">Final Resolution (This will resolve the case)</label>
+                            <textarea 
+                              rows={3}
+                              value={resolutionText}
+                              onChange={(e) => setResolutionText(e.target.value)}
+                              placeholder="Type the final resolution summary..."
+                              className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:ring-2 focus:ring-slate-900 transition-all outline-none font-medium resize-none text-sm"
+                            />
+                          </div>
+                          <button 
+                            disabled={submitting}
+                            className="w-full bg-emerald-600 text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-200 active:scale-[0.98] disabled:opacity-50"
+                          >
+                            {submitting ? 'Updating System...' : 'Resolve & Complete Ticket'}
+                          </button>
+                        </form>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>

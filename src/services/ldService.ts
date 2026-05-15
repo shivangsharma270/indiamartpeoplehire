@@ -132,4 +132,51 @@ export class LdService {
     if (text.includes('```')) text = text.replace(/```json/g, '').replace(/```/g, '').trim();
     return JSON.parse(text);
   }
+
+  async generateGlobalInsights(employees: any[], progress: any[], courses: any[]) {
+    if (!apiKey) throw new Error('LLM Gateway Access Token is not defined.');
+
+    const GLOBAL_INSIGHTS_PROMPT = `
+    As an AI L&D Analyst at IndiaMART, analyze the overall organizational learning data for May 2026.
+    
+    DATA SUMMARY:
+    - Total Employees: ${employees.length}
+    - Total Courses: ${courses.length}
+    - Total Progress Records: ${progress.length}
+    
+    PROGRESS SAMPLE:
+    ${JSON.stringify(progress.slice(0, 5).map(p => ({ 
+      emp: p.employee_profiles?.user_name, 
+      dept: p.employee_profiles?.department,
+      course: p.courses?.title,
+      status: p.status,
+      score: p.quiz_score 
+    })), null, 2)}
+    
+    Return a JSON object with:
+    {
+      "recommendation": "A strategic, one-sentence AI recommendation based on the data trends.",
+      "trend_analysis": "A brief analysis of what's working and what's not.",
+      "suggested_focus": "The critical area for L&D investment next month."
+    }
+    `;
+
+    const response = await fetch(gatewayUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: this.model,
+        messages: [{ role: "user", content: GLOBAL_INSIGHTS_PROMPT }],
+        temperature: 0.3
+      })
+    });
+
+    const data = await response.json();
+    let text = data.choices[0].message.content;
+    if (text.includes('```')) text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(text);
+  }
 }

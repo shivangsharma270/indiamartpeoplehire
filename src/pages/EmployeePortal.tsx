@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bot, Info, Ticket, CheckSquare, Sparkles, LayoutGrid, MessageSquare, ArrowRight, ShieldCheck, Heart, Coffee, Clock, CheckCircle2, AlertCircle, LogOut, User } from 'lucide-react';
+import { Bot, Info, Ticket, CheckSquare, Sparkles, LayoutGrid, MessageSquare, ArrowRight, ShieldCheck, Heart, Coffee, Clock, CheckCircle2, AlertCircle, LogOut, User, Send, Loader2 } from 'lucide-react';
 import HRChatbot from '../components/chatbot/HRChatbot';
 import ExitInterviewChat from '../components/exit/ExitInterviewChat';
 import { useAuth } from '../App';
@@ -16,6 +16,12 @@ export default function EmployeePortal() {
   const [activeTab, setActiveTab] = useState<'chatbot' | 'tickets' | 'directory' | 'benefits' | 'exit-interview'>('chatbot');
   const [tickets, setTickets] = useState<any[]>([]);
   const [loadingTickets, setLoadingTickets] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [replies, setReplies] = useState<any[]>([]);
+  const [newReply, setNewReply] = useState('');
+  const [sendingReply, setSendingReply] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [exitRequest, setExitRequest] = useState<any>(null);
   const [loadingExit, setLoadingExit] = useState(false);
 
@@ -33,6 +39,9 @@ export default function EmployeePortal() {
         .from('exit_requests')
         .select('*')
         .eq('user_id', user.id || user.uid)
+        .neq('status', 'revoked')
+        .order('created_at', { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (error) throw error;
@@ -44,17 +53,48 @@ export default function EmployeePortal() {
     }
   };
 
+  const handleRevokeRequest = async () => {
+    if (!exitRequest) return;
+    try {
+      const { error } = await supabase
+        .from('exit_requests')
+        .update({ status: 'revoked' })
+        .eq('id', exitRequest.id);
+
+      if (error) throw error;
+      
+      toast.success("Resignation successfully revoked.");
+      setExitRequest(null);
+      if (activeTab === 'exit-interview') setActiveTab('chatbot');
+    } catch (error: any) {
+      toast.error(`Failed to revoke request: ${error.message || 'Unknown error'}`);
+    }
+  };
+
   const [showConfirmQuit, setShowConfirmQuit] = useState(false);
   const [isSubmittingQuit, setIsSubmittingQuit] = useState(false);
+  const [separationReason, setSeparationReason] = useState('');
+  const [resignationComments, setResignationComments] = useState('');
+
+  const today = new Date();
+  const lastWorkingDateStr = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
 
   const handleQuitRequest = async () => {
+    if (!separationReason.trim() || !resignationComments.trim()) {
+      toast.error('Please fill out all fields');
+      return;
+    }
     setIsSubmittingQuit(true);
     try {
       const payload = {
         user_id: user.id || user.uid,
         user_name: user.displayName || user.email?.split('@')[0] || 'Employee',
         user_email: user.email,
-        status: 'pending'
+        status: 'pending',
+        resignation_date: today.toISOString(),
+        last_working_date: lastWorkingDateStr.toISOString(),
+        separation_reason: separationReason,
+        resignation_comments: resignationComments
       };
       
       const { data, error } = await supabase.from('exit_requests').insert(payload).select().single();
@@ -83,11 +123,101 @@ export default function EmployeePortal() {
 
       if (error) throw error;
       setTickets(data || []);
+      
+      // Refresh selected ticket data if it exists
+      if (selectedTicket) {
+        const updated = data?.find(t => t.id === selectedTicket.id);
+        if (updated) setSelectedTicket(updated);
+      }
     } catch (error: any) {
       console.error('Error fetching tickets:', error);
       toast.error('Failed to load ticket history');
     } finally {
       setLoadingTickets(false);
+    }
+  };
+
+  const fetchReplies = async (ticketId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('ticket_replies')
+        .select('*')
+        .eq('ticket_id', ticketId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      setReplies(data || []);
+    } catch (error) {
+      console.error('Error fetching replies:', error);
+    }
+  };
+
+  const handleSendReply = async () => {
+    if (!newReply.trim() || !selectedTicket) return;
+    setSendingReply(true);
+    try {
+      const { error } = await supabase.from('ticket_replies').insert({
+        ticket_id: selectedTicket.id,
+        user_id: user.id || user.uid,
+        user_name: user.displayName || user.email?.split('@')[0],
+        message: newReply,
+        sender_type: 'employee'
+      });
+
+      if (error) throw error;
+      
+      // Update ticket updated_at
+      await supabase.from('employee_tickets').update({ updated_at: new Date().toISOString() }).eq('id', selectedTicket.id);
+
+      setNewReply('');
+      fetchReplies(selectedTicket.id);
+      toast.success("Reply sent");
+    } catch (error) {
+      toast.error("Failed to send reply");
+    } finally {
+      setSendingReply(false);
+    }
+  };
+
+  const handleCloseTicket = async (ticketId: string) => {
+    try {
+      const { error } = await supabase
+        .from('employee_tickets')
+        .update({ 
+          status: 'closed', 
+          closed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', ticketId);
+
+      if (error) throw error;
+      toast.success("Ticket closed");
+      fetchTickets();
+    } catch (error) {
+      toast.error("Failed to close ticket");
+    }
+  };
+
+  const handleSubmitFeedback = async () => {
+    if (!feedback.trim() || !selectedTicket) return;
+    setSubmittingFeedback(true);
+    try {
+      const { error } = await supabase
+        .from('employee_tickets')
+        .update({ 
+          feedback,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', selectedTicket.id);
+
+      if (error) throw error;
+      toast.success("Feedback submitted");
+      setFeedback('');
+      fetchTickets();
+    } catch (error) {
+      toast.error("Failed to submit feedback");
+    } finally {
+      setSubmittingFeedback(false);
     }
   };
 
@@ -163,25 +293,9 @@ export default function EmployeePortal() {
               <NavButton 
                 active={activeTab === 'tickets'} 
                 icon={<Ticket size={18} />} 
-                title="My Support Cases" 
+                title="Support tickets" 
                 subtitle="Track your HR requests"
                 onClick={() => setActiveTab('tickets')} 
-              />
-              <NavButton 
-                active={false} 
-                icon={<LayoutGrid size={18} />} 
-                title="Resource Hub" 
-                subtitle="Docs, logos & proposals"
-                onClick={() => {}} 
-                disabled
-              />
-              <NavButton 
-                active={false} 
-                icon={<CheckSquare size={18} />} 
-                title="Appraisal Tracker" 
-                subtitle="View your growth cycles"
-                onClick={() => {}} 
-                disabled
               />
               {!exitRequest && (
                 <div className="relative">
@@ -204,28 +318,74 @@ export default function EmployeePortal() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="absolute bottom-full left-0 right-0 mb-4 bg-white rounded-3xl border border-red-100 shadow-2xl p-6 z-50 overflow-hidden"
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md"
                       >
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-full -mr-12 -mt-12"></div>
-                        <h4 className="text-lg font-black text-slate-900 tracking-tight mb-2 relative z-10">Confirm Resignation?</h4>
-                        <p className="text-xs font-medium text-slate-500 mb-6 relative z-10 leading-relaxed">
-                          This will formally notify the HR department. You will be able to start your exit interview once approved.
-                        </p>
-                        <div className="flex gap-2 relative z-10">
-                          <button 
-                            onClick={handleQuitRequest}
-                            disabled={isSubmittingQuit}
-                            className="flex-1 py-3 bg-red-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-colors shadow-lg shadow-red-100"
-                          >
-                            {isSubmittingQuit ? 'Submitting...' : 'Confirm'}
-                          </button>
-                          <button 
-                            onClick={() => setShowConfirmQuit(false)}
-                            disabled={isSubmittingQuit}
-                            className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-colors"
-                          >
-                            Cancel
-                          </button>
+                        <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden relative">
+                          <div className="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-full -mr-12 -mt-12"></div>
+                          
+                          <div className="p-8 pb-6 relative z-10">
+                            <h4 className="text-2xl font-black text-slate-900 tracking-tight mb-2">Initiate Resignation</h4>
+                            <p className="text-sm font-medium text-slate-500 mb-6 leading-relaxed">
+                              This will formally notify the HR department. You will be able to start your exit interview once your resignation is approved.
+                            </p>
+                            
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                  <label className="text-[10px] font-black text-slate-900 uppercase tracking-widest ml-1">Resignation Date</label>
+                                  <div className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-500">
+                                    {today.toLocaleDateString()}
+                                  </div>
+                                </div>
+                                <div className="space-y-1.5">
+                                  <label className="text-[10px] font-black text-slate-900 uppercase tracking-widest ml-1">Last Working Date</label>
+                                  <div className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-500">
+                                    {lastWorkingDateStr.toLocaleDateString()}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-900 uppercase tracking-widest ml-1">Separation Reason</label>
+                                <input 
+                                  value={separationReason}
+                                  onChange={(e) => setSeparationReason(e.target.value)}
+                                  placeholder="E.g., Better Opportunity"
+                                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-red-500 transition-all"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-900 uppercase tracking-widest ml-1">Comments</label>
+                                <textarea 
+                                  value={resignationComments}
+                                  onChange={(e) => setResignationComments(e.target.value)}
+                                  placeholder="Any additional details..."
+                                  rows={3}
+                                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-red-500 transition-all resize-none"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3 relative z-10">
+                            <button 
+                              onClick={() => {
+                                setShowConfirmQuit(false);
+                                setSeparationReason('');
+                                setResignationComments('');
+                              }}
+                              disabled={isSubmittingQuit}
+                              className="flex-1 py-4 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-colors"
+                            >
+                              Cancel
+                            </button>
+                            <button 
+                              onClick={handleQuitRequest}
+                              disabled={isSubmittingQuit}
+                              className="flex-1 py-4 bg-red-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-colors shadow-lg shadow-red-100"
+                            >
+                              {isSubmittingQuit ? 'Submitting...' : 'Submit to HR'}
+                            </button>
+                          </div>
                         </div>
                       </motion.div>
                     )}
@@ -244,29 +404,14 @@ export default function EmployeePortal() {
             </div>
           </div>
 
-          {/* Quick Info Cards */}
-          <div className="grid grid-cols-2 gap-4">
-             <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all group cursor-pointer">
-                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
-                   <ShieldCheck size={20} />
-                </div>
-                <h4 className="font-bold text-slate-900 text-sm mb-1 uppercase tracking-tight">Security</h4>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">VPN & Keys</p>
-             </div>
-             <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all group cursor-pointer">
-                <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
-                   <Sparkles size={20} />
-                </div>
-                <h4 className="font-bold text-slate-900 text-sm mb-1 uppercase tracking-tight">Perks</h4>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">IM Rewards</p>
-             </div>
-          </div>
-
           <div className="bg-gradient-to-br from-red-600 to-rose-600 p-6 rounded-3xl text-white shadow-xl shadow-red-200 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
             <h3 className="text-xl font-black tracking-tight mb-2 relative z-10">Employee Directory</h3>
             <p className="text-white/80 text-sm font-medium mb-4 relative z-10">Connect with teammates across all offices and departments.</p>
-            <button className="bg-white text-red-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 transition-colors relative z-10">
+            <button 
+              onClick={() => window.open('https://weberp.intermesh.net/login.aspx?msg=2', '_blank', 'noopener,noreferrer')}
+              className="bg-white text-red-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 transition-colors relative z-10"
+            >
               Browse Directory
               <ArrowRight size={14} />
             </button>
@@ -333,47 +478,66 @@ export default function EmployeePortal() {
                 ) : (
                   <div className="space-y-4">
                     {tickets.map((ticket) => (
-                      <div key={ticket.id} className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+                      <div key={ticket.id} className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                        {ticket.status === 'closed' && (
+                          <div className="absolute top-0 right-0 py-1 px-4 bg-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-l border-slate-200 rounded-bl-xl">
+                            Closed case
+                          </div>
+                        )}
                         <div className="flex flex-col md:flex-row justify-between gap-4">
-                          <div className="space-y-2">
+                          <div className="space-y-2 flex-1">
                             <div className="flex items-center gap-3">
                               <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${
                                 ticket.status === 'resolved' || ticket.status === 'closed'
                                   ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
                                   : ticket.status === 'in_progress'
-                                  ? 'bg-amber-50 text-amber-600 border-amber-100'
-                                  : 'bg-blue-50 text-blue-600 border-blue-100'
+                                  ? 'bg-blue-50 text-blue-600 border-blue-100'
+                                  : 'bg-amber-50 text-amber-600 border-amber-100'
                               }`}>
-                                {ticket.status.replace('_', ' ')}
+                                {ticket.status === 'in_progress' ? 'In Process' : ticket.status === 'open' ? 'Awaiting Review' : ticket.status}
                               </span>
                               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                                 {new Date(ticket.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
                               </span>
                             </div>
                             <h4 className="text-lg font-black text-slate-900 tracking-tight">{ticket.subject}</h4>
-                            <p className="text-slate-600 text-sm font-medium">{ticket.description}</p>
+                            <p className="text-slate-600 text-sm font-medium line-clamp-2">{ticket.description}</p>
                           </div>
                           
-                          <div className="md:text-right">
+                          <div className="md:text-right shrink-0">
                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Category</p>
                              <p className="text-sm font-bold text-slate-900">{ticket.category}</p>
+                             
+                             <div className="mt-4 flex gap-2 justify-end">
+                                <button 
+                                  onClick={() => {
+                                    setSelectedTicket(ticket);
+                                    fetchReplies(ticket.id);
+                                  }}
+                                  className="p-2.5 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest border border-slate-200"
+                                >
+                                  <MessageSquare size={14} /> Open Thread
+                                </button>
+                                {ticket.status !== 'closed' && (
+                                  <button 
+                                    onClick={() => handleCloseTicket(ticket.id)}
+                                    className="p-2.5 bg-white text-rose-600 rounded-xl hover:bg-rose-50 transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest border border-rose-100"
+                                  >
+                                    <CheckSquare size={14} /> Close
+                                  </button>
+                                )}
+                             </div>
                           </div>
                         </div>
 
                         {ticket.resolution && (
                           <div className="mt-6 pt-6 border-t border-slate-100">
-                            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                            <div className="bg-emerald-50/50 rounded-2xl p-5 border border-emerald-100">
                               <div className="flex items-center gap-2 mb-3">
                                 <CheckCircle2 size={16} className="text-emerald-500" />
-                                <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">HR Resolution</span>
+                                <span className="text-[10px] font-black text-emerald-900 uppercase tracking-widest">HR Resolution Summary</span>
                               </div>
-                              <p className="text-slate-700 text-sm font-medium leading-relaxed italic">"{ticket.resolution}"</p>
-                              <div className="mt-4 flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-full bg-slate-900 flex items-center justify-center text-[10px] text-white font-black">HR</div>
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                  Resolved on {new Date(ticket.resolved_at).toLocaleDateString()}
-                                </span>
-                              </div>
+                              <p className="text-emerald-900 text-sm font-medium leading-relaxed italic">"{ticket.resolution}"</p>
                             </div>
                           </div>
                         )}
@@ -381,13 +545,145 @@ export default function EmployeePortal() {
                         {!ticket.resolution && ticket.status !== 'resolved' && (
                           <div className="mt-4 flex items-center gap-2 py-2 px-3 bg-amber-50/50 rounded-xl border border-amber-100 w-fit">
                             <AlertCircle size={14} className="text-amber-500" />
-                            <span className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Awaiting HR Review</span>
+                            <span className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">In Process</span>
                           </div>
                         )}
                       </div>
                     ))}
                   </div>
                 )}
+
+                {/* Ticket Detail Modal */}
+                <AnimatePresence>
+                  {selectedTicket && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+                      <motion.div 
+                        initial={{ scale: 0.95, opacity: 0 }} 
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        className="bg-white rounded-3xl w-full max-w-2xl h-[85vh] shadow-2xl flex flex-col overflow-hidden"
+                      >
+                        {/* Modal Header */}
+                        <div className="px-8 py-6 bg-slate-900 text-white flex items-center justify-between shrink-0">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+                              <Ticket size={24} />
+                            </div>
+                            <div>
+                              <h3 className="text-xl font-black tracking-tight">{selectedTicket.subject}</h3>
+                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                Status: {selectedTicket.status.replace('_', ' ')} • {selectedTicket.category}
+                              </p>
+                            </div>
+                          </div>
+                          <button 
+                            onClick={() => {
+                              setSelectedTicket(null);
+                              setReplies([]);
+                            }}
+                            className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all"
+                          >
+                            <LogOut size={20} className="rotate-180" />
+                          </button>
+                        </div>
+
+                        {/* Modal Content - Chat Area */}
+                        <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-slate-50/50">
+                          {/* Original Issue */}
+                          <div className="flex justify-start">
+                            <div className="max-w-[85%] space-y-2">
+                              <div className="flex items-center gap-2 mb-1">
+                                 <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-black text-slate-600">ME</div>
+                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">You • {new Date(selectedTicket.created_at).toLocaleString()}</span>
+                              </div>
+                              <div className="bg-white p-6 rounded-2xl rounded-tl-none border border-slate-200 shadow-sm">
+                                <p className="text-slate-900 font-medium leading-relaxed">{selectedTicket.description}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Replies */}
+                          {replies.map((reply) => (
+                            <div key={reply.id} className={`flex ${reply.sender_type === 'employee' ? 'justify-start' : 'justify-end'}`}>
+                              <div className={`max-w-[85%] space-y-2 ${reply.sender_type === 'employee' ? '' : 'text-right'}`}>
+                                <div className={`flex items-center gap-2 mb-1 ${reply.sender_type === 'employee' ? '' : 'flex-row-reverse'}`}>
+                                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${reply.sender_type === 'employee' ? 'bg-slate-200 text-slate-600' : 'bg-red-600 text-white'}`}>
+                                     {reply.sender_type === 'employee' ? 'ME' : 'HR'}
+                                   </div>
+                                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{reply.user_name} • {new Date(reply.created_at).toLocaleString()}</span>
+                                </div>
+                                <div className={`p-6 rounded-2xl shadow-sm border ${
+                                  reply.sender_type === 'employee' 
+                                    ? 'bg-white border-slate-200 rounded-tl-none' 
+                                    : 'bg-slate-900 text-white border-slate-800 rounded-tr-none'
+                                }`}>
+                                  <p className="font-medium leading-relaxed">{reply.message}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+
+                          {/* Feedback Section */}
+                          {(selectedTicket.status === 'resolved' || selectedTicket.status === 'closed') && (
+                            <div className="pt-8 border-t border-slate-200 space-y-6">
+                              <div className="bg-emerald-50 rounded-2xl p-6 border border-emerald-100">
+                                 <div className="flex items-center gap-3 mb-4">
+                                    <Heart size={20} className="text-emerald-500" />
+                                    <h4 className="font-black text-emerald-900 uppercase tracking-widest text-xs">Employee Feedback</h4>
+                                 </div>
+                                 
+                                 {selectedTicket.feedback ? (
+                                   <div className="italic text-emerald-800 font-medium">
+                                     "{selectedTicket.feedback}"
+                                   </div>
+                                 ) : (
+                                   <div className="space-y-4">
+                                      <p className="text-emerald-700 text-sm font-medium">How was your experience with this resolution? Your feedback helps us improve.</p>
+                                      <textarea 
+                                        value={feedback}
+                                        onChange={(e) => setFeedback(e.target.value)}
+                                        placeholder="Share your thoughts..."
+                                        className="w-full p-4 bg-white border border-emerald-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-24"
+                                      />
+                                      <button 
+                                        onClick={handleSubmitFeedback}
+                                        disabled={submittingFeedback || !feedback.trim()}
+                                        className="px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-lg shadow-emerald-200"
+                                      >
+                                        {submittingFeedback ? 'Submitting...' : 'Submit Feedback'}
+                                      </button>
+                                   </div>
+                                 )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Modal Footer - Reply Area */}
+                        {selectedTicket.status !== 'closed' && (
+                          <div className="p-6 bg-white border-t border-slate-200 shrink-0">
+                             <div className="flex gap-3">
+                                <input 
+                                  value={newReply}
+                                  onChange={(e) => setNewReply(e.target.value)}
+                                  placeholder="Ask for an update or reply..."
+                                  className="flex-1 px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all"
+                                />
+                                <button 
+                                  onClick={handleSendReply}
+                                  disabled={sendingReply || !newReply.trim()}
+                                  className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg shadow-slate-200"
+                                >
+                                  {sendingReply ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                                  Reply
+                                </button>
+                             </div>
+                          </div>
+                        )}
+                      </motion.div>
+                    </div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             ) : activeTab === 'exit-interview' ? (
               <motion.div 
@@ -438,6 +734,17 @@ export default function EmployeePortal() {
                           </div>
                        </div>
                     )}
+
+                    {(exitRequest.status === 'pending' || exitRequest.status === 'approved') && (
+                      <div className="mt-6 border-t border-slate-100 pt-6">
+                        <button 
+                          onClick={handleRevokeRequest}
+                          className="px-6 py-3 bg-white border border-red-200 text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-50 hover:border-red-300 transition-colors w-full"
+                        >
+                          Revoke Resignation
+                        </button>
+                      </div>
+                    )}
                  </div>
 
                  {exitRequest.status === 'approved' && (
@@ -453,7 +760,7 @@ export default function EmployeePortal() {
                       <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6 transform rotate-12">
                         <Sparkles size={40} />
                       </div>
-                      <h4 className="text-2xl font-black text-slate-900 tracking-tight">Onboarding Complete</h4>
+                      <h4 className="text-2xl font-black text-slate-900 tracking-tight">Wish you all the best for your future endeavours.</h4>
                       <p className="text-slate-500 mt-2 max-w-sm mx-auto font-medium">Your exit interview is finished. Our HR team will reach out with final documentation and exit clearance shortly.</p>
                    </div>
                  )}
