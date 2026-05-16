@@ -402,9 +402,13 @@ app.get('/api/calendar/list', async (req, res) => {
 
     // List Calendar Events
     console.log('Fetching events for:', employeeEmail);
+    const now = new Date();
+    const sevenDaysLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    
     const events = await calendar.events.list({
       calendarId: 'primary',
-      timeMin: new Date().toISOString(),
+      timeMin: now.toISOString(),
+      timeMax: sevenDaysLater.toISOString(),
       singleEvents: true,
       orderBy: 'startTime'
     });
