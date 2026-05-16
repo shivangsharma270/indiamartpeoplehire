@@ -45,8 +45,7 @@ export default function Home() {
                   { title: "Autonomous Interview Scheduling", icon: <Zap className="text-blue-600" />, desc: "Smart coordination without human intervention." },
                   { title: "AI HR Support Assistant", icon: <Cpu className="text-purple-600" />, desc: "Instant resolution for employee queries." },
                   { title: "Attrition Intelligence Engine", icon: <Target className="text-emerald-600" />, desc: "Predictive analysis and pattern recognition." },
-                  { title: "Personalized L&D Pathways", icon: <Sparkles className="text-amber-600" />, desc: "Tailored learning journeys for every employee." },
-                  { title: "Workforce Automation Platform", icon: <Database className="text-slate-600" />, desc: "End-to-end digital ecosystem for operations." }
+                  { title: "Personalized L&D Pathways", icon: <Sparkles className="text-amber-600" />, desc: "Tailored learning journeys for every employee." }
                 ].map((feature, idx) => (
                   <motion.div
                     key={idx}
