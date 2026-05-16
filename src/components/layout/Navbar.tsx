@@ -33,7 +33,10 @@ export default function Navbar() {
               )}
               
               <button 
-                onClick={signOut}
+                onClick={async () => {
+                  await signOut();
+                  window.location.href = '/';
+                }}
                 className="flex items-center gap-2 text-slate-500 hover:text-red-600 transition-colors"
               >
                 <LogOut size={20} />

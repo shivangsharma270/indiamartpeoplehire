@@ -148,7 +148,31 @@ export default function ExitInterviewChat({ requestId, userId, onComplete }: Exi
         </button>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50 relative">
+        <AnimatePresence>
+          {isAnalyzing && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm"
+            >
+              <div className="relative w-24 h-24 mb-6">
+                <svg className="animate-spin w-full h-full text-red-100" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="45" fill="none" strokeWidth="8" stroke="currentColor" />
+                </svg>
+                <svg className="animate-spin w-full h-full text-red-600 absolute top-0 left-0" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="45" fill="none" strokeWidth="8" stroke="currentColor" strokeDasharray="283" strokeDashoffset="75" strokeLinecap="round" />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Bot size={32} className="text-red-600 animate-pulse" />
+                </div>
+              </div>
+              <h3 className="text-xl font-black text-slate-900 tracking-tight text-center">Submitting Your Interview............</h3>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-2">AI is analyzing your feedback</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {messages.map((msg, i) => (
           <motion.div 
             initial={{ opacity: 0, y: 10 }}

@@ -16,8 +16,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
-    toast.success('Signed out successfully');
+    window.location.href = '/';
   };
 
   let menuItems: any[] = [];

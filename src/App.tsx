@@ -121,12 +121,12 @@ export default function App() {
                 <Route path="/profile" element={user && role === 'candidate' ? <Profile /> : <Navigate to="/login" />} />
                 
                 {/* Admin Routes */}
-                <Route path="/admin" element={user && role === 'admin' ? <AdminDashboard /> : <Navigate to="/login" />} />
-                <Route path="/admin/jobs" element={user && role === 'admin' ? <ActiveJobs /> : <Navigate to="/login" />} />
-                <Route path="/admin/applicant/:id" element={user && role === 'admin' ? <ApplicantDetail /> : <Navigate to="/login" />} />
-                <Route path="/admin/employee-track" element={user && role === 'admin' ? <AdminEmployeeTrack /> : <Navigate to="/login" />} />
-                <Route path="/admin/exit-management" element={user && role === 'admin' ? <AdminExitManagement /> : <Navigate to="/login" />} />
-                <Route path="/admin/ld-planner" element={user && role === 'admin' ? <AdminLdDashboard /> : <Navigate to="/login" />} />
+                <Route path="/admin" element={user && role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} />
+                <Route path="/admin/jobs" element={user && role === 'admin' ? <ActiveJobs /> : <Navigate to="/" />} />
+                <Route path="/admin/applicant/:id" element={user && role === 'admin' ? <ApplicantDetail /> : <Navigate to="/" />} />
+                <Route path="/admin/employee-track" element={user && role === 'admin' ? <AdminEmployeeTrack /> : <Navigate to="/" />} />
+                <Route path="/admin/exit-management" element={user && role === 'admin' ? <AdminExitManagement /> : <Navigate to="/" />} />
+                <Route path="/admin/ld-planner" element={user && role === 'admin' ? <AdminLdDashboard /> : <Navigate to="/" />} />
                 
                 {/* Employee / Team Routes */}
                 <Route path="/portal" element={user && role === 'employee' ? <EmployeePortal /> : <Navigate to="/employee-login" />} />
