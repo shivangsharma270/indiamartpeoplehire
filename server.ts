@@ -69,8 +69,7 @@ const getOAuth2Client = (req?: express.Request) => {
   return new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    redirectUri || 'http://localhost:3000/api/auth/google/callback'
-  );
+    redirectUri || 'https://indiamartpeoplehire.onrender.com/api/auth/google/callback'  );
 };
 
 const SCOPES = [
