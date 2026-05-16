@@ -183,7 +183,8 @@ export default function AdminDashboard() {
 
       // Simple busy slot logic (assume 9am - 5pm M-F)
       const busyEvents = data.events || [];
-      console.log('Processing busy events:', busyEvents.length);
+      console.log('Processing busy events count:', busyEvents.length);
+      console.log('Busy events:', busyEvents);
       const freeSlots = [];
       const now = new Date();
       for (let i = 0; i < 7; i++) {
@@ -204,14 +205,17 @@ export default function AdminDashboard() {
              // Check if the event overlaps with the 1-hour slot (slot to slot + 1h)
              const slotEnd = new Date(slot.getTime() + 60 * 60 * 1000);
              const overlap = (start < slotEnd && end > slot);
-             if (overlap) console.log('Slot busy:', slot, 'Event:', e.summary);
+             if (overlap) console.warn('Slot busy:', slot.toLocaleString(), 'Event:', e.summary);
              return overlap;
           });
           
-          if (!isBusy) freeSlots.push(slot);
+          if (!isBusy) {
+              console.log('Slot free:', slot.toLocaleString());
+              freeSlots.push(slot);
+          }
         }
       }
-      console.log('Free slots found:', freeSlots.length);
+      console.log('Final free slots found:', freeSlots.length);
       setAvailability(freeSlots);
     } catch (err: any) {
       toast.error('Failed to fetch PM availability: ' + err.message);
