@@ -20,8 +20,17 @@ export default function AdminDashboard() {
   const [viewMode, setViewMode] = useState<'all' | 'shortlisted'>('all');
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [activeProduct, setActiveProduct] = useState('hirepilot');
-  const [isCalendarConnected, setIsCalendarConnected] = useState(false);
+  const [showSchedulingModal, setShowSchedulingModal] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
+  const [selectedPM, setSelectedPM] = useState<string>('');
+  const [availability, setAvailability] = useState<any[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<any>(null);
+  const [pmEmails] = useState([
+    'hetal.vadukul@indiamart.com',
+    'deepak.yadav01@indiamart.com',
+    'mahadev@indiamart.com',
+    'shivang.sharma@indiamart.com'
+  ]);
 
   const [jobForm, setJobForm] = useState({
     title: '',
@@ -34,17 +43,6 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchData();
-
-    const handleMessage = (event: MessageEvent) => {
-      // Validate origin if needed, but for simplicity:
-      if (event.data?.type === 'GOOGLE_AUTH_SUCCESS') {
-        toast.success("Calendar connected successfully!");
-        fetchData();
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
   }, []);
 
   const fetchData = async () => {
@@ -78,10 +76,6 @@ export default function AdminDashboard() {
         candidate: candidatesMap.get(app.candidate_id),
         ai_score: scoresMap.get(app.id) || null
       })).filter(app => app.job && app.candidate); // Filter out orphans if any
-
-      // Check calendar connection
-      const { count } = await supabase.from('interviewer_tokens').select('*', { count: 'exact', head: true });
-      setIsCalendarConnected((count || 0) > 0);
 
       setJobs(jobsData || []);
       const sortedApps = enrichedApps.sort((a, b) => (b.ai_score?.score || 0) - (a.ai_score?.score || 0));
@@ -180,13 +174,66 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleConnectCalendar = async () => {
+  // Helper to fetch PM availability
+  const fetchPMAvailability = async (pmEmail: string) => {
     try {
-      const resp = await fetch('/api/auth/google/url');
-      const { url } = await resp.json();
-      window.open(url, '_blank');
-    } catch (error) {
-      toast.error("Failed to get auth URL");
+      const resp = await fetch(`/api/calendar/list?employeeEmail=${encodeURIComponent(pmEmail)}`);
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error);
+
+      // Simple busy slot logic (assume 9am - 5pm M-F)
+      const busyEvents = data.events || [];
+      const freeSlots = [];
+      const now = new Date();
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(now);
+        d.setDate(now.getDate() + i);
+        if (d.getDay() === 0 || d.getDay() === 6) continue; // Skip weekend
+        
+        for (let hour = 9; hour < 17; hour++) {
+          const slot = new Date(d);
+          slot.setHours(hour, 0, 0, 0);
+          
+          const isBusy = busyEvents.some((e: any) => {
+             const startStr = e.start.dateTime || e.start.date;
+             const endStr = e.end.dateTime || e.end.date;
+             const start = new Date(startStr);
+             const end = new Date(endStr);
+             
+             // Check if the event overlaps with the 1-hour slot (slot to slot + 1h)
+             const slotEnd = new Date(slot.getTime() + 60 * 60 * 1000);
+             return (start < slotEnd && end > slot);
+          });
+          
+          if (!isBusy) freeSlots.push(slot);
+        }
+      }
+      setAvailability(freeSlots);
+    } catch (err: any) {
+      toast.error('Failed to fetch PM availability: ' + err.message);
+    }
+  };
+
+  const bookInterview = async () => {
+    if (!selectedSlot || !selectedPM || !selectedCandidate) return;
+    try {
+      const resp = await fetch('/api/calendar/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          employeeEmail: selectedPM,
+          title: `Interview: ${selectedCandidate.candidate.full_name}`,
+          date: selectedSlot.toISOString().split('T')[0],
+          time: selectedSlot.toTimeString().split(':')[0] + ":" + selectedSlot.toTimeString().split(':')[1],
+          duration: 30
+        })
+      });
+      if (!resp.ok) throw new Error('Booking failed');
+      toast.success('Interview scheduled successfully!');
+      setShowSchedulingModal(false);
+      fetchData(); // Refresh app status
+    } catch (err: any) {
+      toast.error('Failed to book interview');
     }
   };
 
@@ -196,7 +243,7 @@ export default function AdminDashboard() {
     <div className="flex flex-col h-full bg-slate-50">
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-full overflow-hidden">
-        {activeProduct === 'hirepilot' ? (
+        {true ? (
           <>
             <div className="px-4 md:px-8 py-4 md:py-6 border-b border-slate-200 bg-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0 shadow-[0_1px_2px_rgba(0,0,0,0.05)] z-10 w-full relative">
               <div className="flex items-center gap-3 md:gap-5">
@@ -209,11 +256,18 @@ export default function AdminDashboard() {
               </div>
               <div className="flex gap-2 w-full md:w-auto">
                 <button
-                  onClick={handleConnectCalendar}
-                  className={`flex-1 md:flex-none px-4 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95 border ${isCalendarConnected ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-white text-slate-600 border-slate-200'}`}
+                  onClick={() => setShowSchedulingModal(true)}
+                  className="flex-1 md:flex-none px-4 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95 border bg-white text-slate-600 border-slate-200"
                 >
                   <Calendar size={16} />
-                  {isCalendarConnected ? 'Ready' : 'Calendar'}
+                  Schedule
+                </button>
+                <button
+                  onClick={() => setShowSchedulingModal(true)}
+                  className="flex-1 md:flex-none px-4 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95 border bg-white text-slate-600 border-slate-200"
+                >
+                  <Calendar size={16} />
+                  Schedule
                 </button>
                 <button
                   onClick={() => setShowJobModal(true)}
@@ -344,7 +398,7 @@ export default function AdminDashboard() {
                               <td className="px-6 py-4 text-right">
                                 <div className="flex items-center justify-end gap-1">
                                   {app.status !== 'shortlisted' && app.status !== 'accepted' && app.status !== 'rejected' && (
-                                      <button onClick={() => handleUpdateStatus(app.id, 'shortlisted')} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Shortlist"><Star size={16} /></button>
+                                      <button onClick={() => { setSelectedCandidate(app); setShowSchedulingModal(true); }} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Shortlist"><Star size={16} /></button>
                                   )}
                                   {app.status !== 'accepted' && (
                                       <button onClick={() => handleUpdateStatus(app.id, 'accepted')} className="p-1.5 text-green-500 hover:bg-green-50 rounded-lg transition-all" title="Accept"><CheckCircle size={16} /></button>
@@ -380,7 +434,7 @@ export default function AdminDashboard() {
         )}
       </main>
 
-      {showJobModal && (
+       {showJobModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
           <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl border border-slate-200">
              <h3 className="text-xl font-bold mb-6 text-slate-900 tracking-tight">New Position Descriptor</h3>
@@ -397,6 +451,47 @@ export default function AdminDashboard() {
                    <button type="submit" className="flex-1 py-3 rounded-xl text-sm font-bold bg-red-600 text-white shadow-lg shadow-red-200 hover:bg-red-700 hover:scale-[1.02] active:scale-95 transition-all">Publish Job</button>
                 </div>
              </form>
+          </motion.div>
+        </div>
+      )}
+
+      {showSchedulingModal && selectedCandidate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-2xl p-8 max-w-2xl w-full shadow-2xl border border-slate-200">
+            <h3 className="text-xl font-bold mb-6 text-slate-900 tracking-tight">Schedule Interview: {selectedCandidate.candidate.full_name}</h3>
+            
+            <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block">Candidate Email</label>
+                  <input readOnly value={selectedCandidate.candidate.email} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" />
+                </div>
+                
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block">Select Project Manager</label>
+                  <select value={selectedPM} onChange={(e) => { setSelectedPM(e.target.value); fetchPMAvailability(e.target.value); }} className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-500">
+                      <option value="">Select a PM</option>
+                      {pmEmails.map(email => <option key={email} value={email}>{email}</option>)}
+                  </select>
+                </div>
+                
+                {selectedPM && (
+                  <div>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 block">Available Slots (Next 7 days)</label>
+                    <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto p-2 border border-slate-100 rounded-xl">
+                      {availability.map((slot, i) => (
+                        <button key={i} onClick={() => setSelectedSlot(slot)} className={`px-2 py-1 text-xs rounded-lg ${selectedSlot === slot ? 'bg-red-600 text-white' : 'bg-slate-100 hover:bg-slate-200'}`}>
+                          {slot.toLocaleString('en-IN', { hour: 'numeric', minute: 'numeric', weekday: 'short', day: 'numeric' })}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex gap-3 pt-4">
+                    <button type="button" onClick={() => setShowSchedulingModal(false)} className="flex-1 py-3 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">Cancel</button>
+                    <button onClick={() => { bookInterview(); handleUpdateStatus(selectedCandidate.id, 'shortlisted'); }} disabled={!selectedSlot || !selectedPM} className="flex-1 py-3 rounded-xl text-sm font-bold bg-red-600 text-white shadow-lg shadow-red-200 hover:bg-red-700 disabled:opacity-50 transition-all">Schedule Interview</button>
+                </div>
+            </div>
           </motion.div>
         </div>
       )}

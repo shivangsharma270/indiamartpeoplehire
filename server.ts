@@ -56,6 +56,29 @@ async function callLLMGateway(prompt: string, model: string = "google/gemini-2.5
   return content;
 }
 
+// Helper for Domain Delegation Authentication
+const getDomainDelegationClient = (subjectEmail: string) => {
+  if (!process.env.GOOGLE_SERVICE_ACCOUNT_SETTINGS) {
+    throw new Error('GOOGLE_SERVICE_ACCOUNT_SETTINGS environment variable is not configured.');
+  }
+
+  try {
+    const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_SETTINGS);
+    
+    return new google.auth.JWT({
+      email: credentials.client_email,
+      key: credentials.private_key,
+      scopes: [
+        'https://www.googleapis.com/auth/calendar',
+        'https://www.googleapis.com/auth/calendar.events'
+      ],
+      subject: subjectEmail
+    });
+  } catch (error) {
+    throw new Error('Failed to parse GOOGLE_SERVICE_ACCOUNT_SETTINGS. Ensure it is a valid JSON string.');
+  }
+};
+
 // Google OAuth client helper
 const getOAuth2Client = (req?: express.Request) => {
   let redirectUri = process.env.GOOGLE_REDIRECT_URI;
@@ -313,6 +336,85 @@ app.post('/api/chatbot/query', async (req, res) => {
   } catch (error) {
     console.error('Chatbot Error:', error);
     res.status(500).json({ error: 'Failed to process chat query' });
+  }
+});
+
+// 6. Calendar Scheduler Endpoint
+app.post('/api/calendar/schedule', async (req, res) => {
+  const { employeeEmail, title, date, time, duration } = req.body;
+
+  try {
+    if (!employeeEmail || !title || !date || !time || !duration) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Calculate start and end times
+    const startDateTime = new Date(`${date}T${time}:00`);
+    const endDateTime = new Date(startDateTime.getTime() + duration * 60000);
+
+    // Authenticate using Domain Delegation to impersonate the employee
+    const authClient = getDomainDelegationClient(employeeEmail);
+
+    const calendar = google.calendar({ version: 'v3', auth: authClient });
+
+    // Create Calendar Event
+    const event = {
+      summary: title,
+      description: 'Scheduled meeting',
+      start: { dateTime: startDateTime.toISOString() },
+      end: { dateTime: endDateTime.toISOString() },
+      conferenceData: {
+        createRequest: {
+          requestId: `meeting-${Date.now()}`,
+          conferenceSolutionKey: { type: 'hangoutsMeet' }
+        }
+      }
+    };
+
+    const calendarEvent = await calendar.events.insert({
+      calendarId: 'primary',
+      requestBody: event,
+      conferenceDataVersion: 1,
+      sendUpdates: 'all'
+    });
+
+    res.json({ success: true, event: calendarEvent.data });
+
+  } catch (error) {
+    console.error('Calendar Scheduling Error:', error);
+    res.status(500).json({ error: 'Failed to schedule meeting' });
+  }
+});
+
+// 7. List Calendar Events Endpoint
+app.get('/api/calendar/list', async (req, res) => {
+  const { employeeEmail } = req.query;
+
+  try {
+    if (!employeeEmail || typeof employeeEmail !== 'string') {
+      return res.status(400).json({ error: 'Missing or invalid employee email' });
+    }
+
+    // Authenticate using Domain Delegation to impersonate the employee
+    const authClient = getDomainDelegationClient(employeeEmail);
+
+    const calendar = google.calendar({ version: 'v3', auth: authClient });
+
+    // List Calendar Events
+    console.log('Fetching events for:', employeeEmail);
+    const events = await calendar.events.list({
+      calendarId: 'primary',
+      timeMin: new Date().toISOString(),
+      singleEvents: true,
+      orderBy: 'startTime'
+    });
+    console.log('Events fetched:', events.data.items?.length);
+
+    res.json({ success: true, events: events.data.items });
+
+  } catch (error) {
+    console.error('Calendar Fetching Error:', error);
+    res.status(500).json({ error: 'Failed to fetch calendar events' });
   }
 });
 
