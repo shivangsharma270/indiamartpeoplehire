@@ -195,6 +195,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           employeeEmail: selectedPM,
+          candidateEmail: selectedCandidate.candidate.email,
           title: `Interview: ${selectedCandidate.candidate.full_name}`,
           date: date,
           time: time,
@@ -452,11 +453,17 @@ export default function AdminDashboard() {
                     <div>
                       <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 block">Manager's Schedule (Next 7 days)</label>
                       <div className="max-h-40 overflow-y-auto p-2 border border-slate-100 rounded-xl space-y-2">
-                        {pmEvents.map((e: any, i: number) => (
-                          <div key={i} className="text-xs p-2 bg-slate-50 rounded">
-                            {e.summary} - {new Date(e.start.dateTime || e.start.date).toLocaleString()}
-                          </div>
-                        ))}
+                        {pmEvents.length > 0 ? pmEvents.map((e: any, i: number) => {
+                           const start = new Date(e.start.dateTime || e.start.date);
+                           const end = new Date(e.end.dateTime || e.end.date);
+                           return (
+                             <div key={i} className="text-xs p-2 bg-red-50 border border-red-100 rounded text-red-800">
+                               <div className="font-bold">{e.summary || 'Busy'}</div>
+                               <div>{start.toLocaleDateString([], { month: 'short', day: 'numeric'})} | {start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                             </div>
+                           );
+                        }) : <div className="text-slate-500 text-xs">No busy slots in the next 7 days.</div>
+                        }
                       </div>
                     </div>
                     

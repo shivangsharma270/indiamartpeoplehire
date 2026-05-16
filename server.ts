@@ -341,10 +341,10 @@ app.post('/api/chatbot/query', async (req, res) => {
 
 // 6. Calendar Scheduler Endpoint
 app.post('/api/calendar/schedule', async (req, res) => {
-  const { employeeEmail, title, date, time, duration } = req.body;
+  const { employeeEmail, candidateEmail, title, date, time, duration } = req.body;
 
   try {
-    if (!employeeEmail || !title || !date || !time || !duration) {
+    if (!employeeEmail || !candidateEmail || !title || !date || !time || !duration) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -363,6 +363,7 @@ app.post('/api/calendar/schedule', async (req, res) => {
       description: 'Scheduled meeting',
       start: { dateTime: startDateTime.toISOString() },
       end: { dateTime: endDateTime.toISOString() },
+      attendees: [{ email: candidateEmail }, { email: employeeEmail }],
       conferenceData: {
         createRequest: {
           requestId: `meeting-${Date.now()}`,
