@@ -23,8 +23,9 @@ export default function AdminDashboard() {
   const [showSchedulingModal, setShowSchedulingModal] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
   const [selectedPM, setSelectedPM] = useState<string>('');
-  const [availability, setAvailability] = useState<any[]>([]);
-  const [selectedSlot, setSelectedSlot] = useState<any>(null);
+  const [pmEvents, setPmEvents] = useState<any[]>([]);
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
   const [pmEmails] = useState([
     'hetal.vadukul@indiamart.com',
     'deepak.yadav01@indiamart.com',
@@ -174,56 +175,20 @@ export default function AdminDashboard() {
     }
   };
 
-  // Helper to fetch PM availability
-  const fetchPMAvailability = async (pmEmail: string) => {
+  // Helper to fetch PM events
+  const fetchPMEvents = async (pmEmail: string) => {
     try {
       const resp = await fetch(`/api/calendar/list?employeeEmail=${encodeURIComponent(pmEmail)}`);
       const data = await resp.json();
       if (!resp.ok) throw new Error(data.error);
-
-      // Simple busy slot logic (assume 9am - 5pm M-F)
-      const busyEvents = data.events || [];
-      console.log('Processing busy events count:', busyEvents.length);
-      console.log('Busy events:', busyEvents);
-      const freeSlots = [];
-      const now = new Date();
-      for (let i = 0; i < 7; i++) {
-        const d = new Date(now);
-        d.setDate(now.getDate() + i);
-        if (d.getDay() === 0 || d.getDay() === 6) continue; // Skip weekend
-        
-        for (let hour = 9; hour < 17; hour++) {
-          const slot = new Date(d);
-          slot.setHours(hour, 0, 0, 0);
-          
-          const isBusy = busyEvents.some((e: any) => {
-             const startStr = e.start.dateTime || e.start.date;
-             const endStr = e.end.dateTime || e.end.date;
-             const start = new Date(startStr);
-             const end = new Date(endStr);
-             
-             // Check if the event overlaps with the 1-hour slot (slot to slot + 1h)
-             const slotEnd = new Date(slot.getTime() + 60 * 60 * 1000);
-             const overlap = (start < slotEnd && end > slot);
-             if (overlap) console.warn('Slot busy:', slot.toLocaleString(), 'Event:', e.summary);
-             return overlap;
-          });
-          
-          if (!isBusy) {
-              console.log('Slot free:', slot.toLocaleString());
-              freeSlots.push(slot);
-          }
-        }
-      }
-      console.log('Final free slots found:', freeSlots.length);
-      setAvailability(freeSlots);
+      setPmEvents(data.events || []);
     } catch (err: any) {
-      toast.error('Failed to fetch PM availability: ' + err.message);
+      toast.error('Failed to fetch PM schedule: ' + err.message);
     }
   };
 
   const bookInterview = async () => {
-    if (!selectedSlot || !selectedPM || !selectedCandidate) return;
+    if (!date || !time || !selectedPM || !selectedCandidate) return;
     try {
       const resp = await fetch('/api/calendar/schedule', {
         method: 'POST',
@@ -231,8 +196,8 @@ export default function AdminDashboard() {
         body: JSON.stringify({
           employeeEmail: selectedPM,
           title: `Interview: ${selectedCandidate.candidate.full_name}`,
-          date: selectedSlot.toISOString().split('T')[0],
-          time: selectedSlot.toTimeString().split(':')[0] + ":" + selectedSlot.toTimeString().split(':')[1],
+          date: date,
+          time: time,
           duration: 30
         })
       });
@@ -476,28 +441,35 @@ export default function AdminDashboard() {
                 
                 <div>
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block">Select Project Manager</label>
-                  <select value={selectedPM} onChange={(e) => { setSelectedPM(e.target.value); fetchPMAvailability(e.target.value); }} className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-500">
+                  <select value={selectedPM} onChange={(e) => { setSelectedPM(e.target.value); fetchPMEvents(e.target.value); }} className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-500">
                       <option value="">Select a PM</option>
                       {pmEmails.map(email => <option key={email} value={email}>{email}</option>)}
                   </select>
                 </div>
                 
                 {selectedPM && (
-                  <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 block">Available Slots (Next 7 days)</label>
-                    <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto p-2 border border-slate-100 rounded-xl">
-                      {availability.map((slot, i) => (
-                        <button key={i} onClick={() => setSelectedSlot(slot)} className={`px-2 py-1 text-xs rounded-lg ${selectedSlot === slot ? 'bg-red-600 text-white' : 'bg-slate-100 hover:bg-slate-200'}`}>
-                          {slot.toLocaleString('en-IN', { hour: 'numeric', minute: 'numeric', weekday: 'short', day: 'numeric' })}
-                        </button>
-                      ))}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 block">Manager's Schedule (Next 7 days)</label>
+                      <div className="max-h-40 overflow-y-auto p-2 border border-slate-100 rounded-xl space-y-2">
+                        {pmEvents.map((e: any, i: number) => (
+                          <div key={i} className="text-xs p-2 bg-slate-50 rounded">
+                            {e.summary} - {new Date(e.start.dateTime || e.start.date).toLocaleString()}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm" required />
+                        <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm" required />
                     </div>
                   </div>
                 )}
                 
                 <div className="flex gap-3 pt-4">
                     <button type="button" onClick={() => setShowSchedulingModal(false)} className="flex-1 py-3 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">Cancel</button>
-                    <button onClick={() => { bookInterview(); handleUpdateStatus(selectedCandidate.id, 'shortlisted'); }} disabled={!selectedSlot || !selectedPM} className="flex-1 py-3 rounded-xl text-sm font-bold bg-red-600 text-white shadow-lg shadow-red-200 hover:bg-red-700 disabled:opacity-50 transition-all">Schedule Interview</button>
+                    <button onClick={() => { bookInterview(); handleUpdateStatus(selectedCandidate.id, 'shortlisted'); }} disabled={!date || !time || !selectedPM} className="flex-1 py-3 rounded-xl text-sm font-bold bg-red-600 text-white shadow-lg shadow-red-200 hover:bg-red-700 disabled:opacity-50 transition-all">Schedule Interview</button>
                 </div>
             </div>
           </motion.div>
